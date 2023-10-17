@@ -5,7 +5,7 @@ import { Camera } from "@mediapipe/camera_utils";
 import { useState } from "react";
 import TopBar from "../../components/topbar";
 import FooterSubmit from "../../components/get-photo/footer-submit";
-import CardEmail from "../../components/get-photo/card-email";
+import { useNavigate } from "react-router-dom";
 
 const width = 400;
 const height = 450;
@@ -16,7 +16,8 @@ const GetPhoto = () => {
       model: "short",
     },
     faceDetection: new FaceDetection.FaceDetection({
-      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
     }),
     camera: ({ mediaSrc, onFrame }) =>
       new Camera(mediaSrc, {
@@ -26,11 +27,14 @@ const GetPhoto = () => {
       }),
   });
 
+  const navigate = useNavigate();
+
   const [getCaputre, setCapture] = useState(null);
 
   const capture = () => {
     let photo = webcamRef.current.getScreenshot();
     setCapture(photo);
+    navigate("/multi-form");
   };
 
   return (
@@ -62,7 +66,9 @@ const GetPhoto = () => {
             }}
           />
         </div>
-        <p className="text-white text-center text-lg font-semibold">[Ambil Gambar]</p>
+        <p className="text-white text-center text-lg font-semibold">
+          [Ambil Gambar]
+        </p>
         <FooterSubmit getCapture={capture} />
       </div>
     </section>

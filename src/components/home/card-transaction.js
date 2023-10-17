@@ -2,7 +2,7 @@ import { Card } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const CardTransaction = ({ children, imgCover }) => {
+const CardTransaction = ({ children, imgCover, link }) => {
   const navigate = useNavigate();
   return (
     <Card
@@ -16,7 +16,7 @@ const CardTransaction = ({ children, imgCover }) => {
           className="h-36 w-full rounded bg-sky-200"
         />
       }
-      onClick={() => navigate("/layanan-finansial")}>
+      onClick={() => navigate(`/${link}`)}>
       {children}
     </Card>
   );

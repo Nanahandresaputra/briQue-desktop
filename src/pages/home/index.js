@@ -1,7 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CardTransaction from "../../components/home/card-transaction";
+import { useDispatch, useSelector } from "react-redux";
+import { BRIQUE_ACTION } from "../../store/actions";
+import { openNotifications } from "./../../helpers/notification/index";
 
 const Home = () => {
+  const { formCategory } = useSelector((state) => state.briQueReducer);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(BRIQUE_ACTION.formCategoryAction()).catch(({ errorMssg }) => {
+      openNotifications("error", "Error", errorMssg);
+    });
+  }, []);
+
   return (
     <section className="flex flex-col justify-center items-center">
       <h1 className="font-bold text-6xl">
@@ -11,14 +22,27 @@ const Home = () => {
       <div>
         <h2 className="text-white font-semibold">Pilih Pelayanan</h2>
         <div className="flex justify-center items-center space-x-7">
-          <CardTransaction imgCover="./assets/svg/financial.svg">
-            <h1 className="text-2xl font-medium text-blue-900">Financial </h1>
-            <p className="text-gray-500  font-medium">Setoran Tunai, Overbooking, Setoran Tunai, Overbooking</p>
-          </CardTransaction>
-          <CardTransaction imgCover="./assets/svg/non-financial.svg">
-            <h1 className="text-2xl font-medium text-blue-900">Non-FInancial</h1>
-            <p className="text-gray-500  font-medium">Setoran Tunai, Overbooking, Setoran Tunai, Overbooking</p>
-          </CardTransaction>
+          {formCategory.categories?.map((data, index) => (
+            <CardTransaction
+              link={data.name}
+              imgCover={
+                data.name === "financial"
+                  ? "./assets/svg/financial.svg"
+                  : "./assets/svg/non-financial.svg"
+              }
+              key={index}>
+              <h1 className="text-2xl font-medium text-blue-900">
+                {data.displayName}
+              </h1>
+              <p className="text-gray-500 h-20 font-medium">
+                {data.forms
+                  ?.slice(0, 3)
+                  ?.map((data) => data.displayName)
+                  .toString()}
+                , dan Lainnya.
+              </p>
+            </CardTransaction>
+          ))}
         </div>
       </div>
     </section>

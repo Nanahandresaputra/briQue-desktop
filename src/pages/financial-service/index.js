@@ -42,9 +42,7 @@ const FinancialService = () => {
         </div>
       </div>
       <Footer
-        btnDisabled={
-          !getServices.length || getServices.length > 8 ? true : false
-        }
+        btnDisabled={!getServices.length ? true : false}
         onClick={navigatePage}>
         Selanjutnya
       </Footer>

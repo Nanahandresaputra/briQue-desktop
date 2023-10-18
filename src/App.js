@@ -4,6 +4,7 @@ import FinancialService from "./pages/financial-service";
 import GetPhoto from "./pages/get-photo";
 import Testing from "./pages/test-test/test";
 import MultiForm from "./pages/multi-form";
+import Eform from "./pages/e-form";
 function App() {
   return (
     <section className="flex h-screen items-center justify-center">
@@ -19,6 +20,7 @@ function App() {
             <Route path="/foto-nasabah" element={<GetPhoto />} />
             <Route path="/testing" element={<Testing />} />
             <Route path="/multi-form" element={<MultiForm />} />
+            <Route path="/eform/:id" element={<Eform />} />
           </Routes>
         </Router>
       </div>

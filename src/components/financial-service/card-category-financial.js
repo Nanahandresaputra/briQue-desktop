@@ -8,6 +8,7 @@ import { RiBookReadFill } from "react-icons/ri";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { BRIQUE_ACTION } from "../../store/actions";
+import { v4 as uuidv4 } from "uuid";
 
 const CardCategoryFinancial = ({ data, service, getServices }) => {
   const [counter, setCounter] = useState(0);
@@ -61,25 +62,29 @@ const CardCategoryFinancial = ({ data, service, getServices }) => {
   // let iconsNonFinancial =
   //   ;
 
-  console.log(data);
+  let dataService = { ...data, id: uuidv4().replace(/-/gi, "") };
 
   const increment = () => {
     setCounter(counter + 1);
-    dispatch(BRIQUE_ACTION.setGetServices([...getServices, data.name]));
+    dispatch(BRIQUE_ACTION.setGetServices([...getServices, dataService]));
   };
 
   const decrement = () => {
     counter === 0 ? setCounter(0) : setCounter(counter - 1);
 
-    let index = getServices.indexOf(data.name);
+    // let sameValue = getServices.sameValueOf(data.id);
+    let sameValue = getServices
+      ?.filter((data) => data.name === dataService.name)
+      .at(-1);
 
-    index > -1
+    sameValue
       ? dispatch(
           BRIQUE_ACTION.setGetServices(
-            getServices.filter((datas) => datas != data.name)
+            getServices.filter((datas) => datas.id != sameValue.id)
           )
         )
       : dispatch(BRIQUE_ACTION.setGetServices(getServices));
+    // getServices.filter((datas) => datas.name != dataService.name);
   };
   return (
     <section className="flex items-center space-x-3">
@@ -90,7 +95,9 @@ const CardCategoryFinancial = ({ data, service, getServices }) => {
             {data.displayName}
           </p>
           <div className="flex space-x-3 items-center text-blue-900">
-            <Button onClick={decrement}>-</Button>
+            <Button onClick={decrement} disabled={counter < 1 ? true : false}>
+              -
+            </Button>
             <p className="text-xl font-medium">{counter}</p>
             <Button
               disabled={getServices.length > 8 ? true : false}

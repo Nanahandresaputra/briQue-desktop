@@ -15,14 +15,19 @@ const MultiForm = () => {
   return (
     <section className="h-full max-h-[550px]">
       <TopBar>Multi Form</TopBar>
-      <div className="my-7 flex justify-center h-full">
+      <div
+        className={`my-7 flex justify-center ${
+          getServices.length < 5 ? "h-full" : "h-auto"
+        }`}>
         <div className="space-y-3 w-8/12">
           <h1 className="text-white text-lg font-semibold">
             Pilih Reservasi Transaksi
           </h1>
           <div className="space-y-5">
             {getServices?.map((data, index) => (
-              <CardMultiForm key={index}>{data}</CardMultiForm>
+              <CardMultiForm data={data} key={index}>
+                {data.displayName}
+              </CardMultiForm>
             ))}
           </div>
         </div>

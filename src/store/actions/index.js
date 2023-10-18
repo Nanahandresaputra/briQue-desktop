@@ -89,4 +89,6 @@ export const BRIQUE_ACTION = {
   formCategoryAction,
   setGetServices,
   formStructureAction,
+  setFormCategoryApi,
+  setFormStructure,
 };

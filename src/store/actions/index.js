@@ -33,6 +33,13 @@ const setGetServices = (payload) => {
   };
 };
 
+const setListForm = (payload) => {
+  return {
+    type: BRIQUE_ACTION_TYPE.FORM_LIST,
+    payload,
+  };
+};
+
 const formCategoryAction = () => {
   return (dispatch) => {
     return new Promise((resolve, reject) => {
@@ -91,4 +98,5 @@ export const BRIQUE_ACTION = {
   formStructureAction,
   setFormCategoryApi,
   setFormStructure,
+  setListForm,
 };

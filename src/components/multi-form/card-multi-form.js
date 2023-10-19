@@ -2,9 +2,13 @@ import { Button, Tag } from "antd";
 import { LuClipboardEdit } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 
-const CardMultiForm = ({ children, data }) => {
+const CardMultiForm = ({ children, data, listForm }) => {
   const navigate = useNavigate();
-  let params = JSON.stringify(data);
+  let params = JSON.stringify({
+    name: data.name,
+    id: data.id,
+  });
+
   return (
     <section className="p-3  h-full bg-gray-50 rounded-lg shadow-2xl text-blue-900">
       <div className="flex justify-between items-center">
@@ -18,7 +22,11 @@ const CardMultiForm = ({ children, data }) => {
           }}
         />
       </div>
-      <Tag color="error">form belum diisi</Tag>
+      {listForm?.find((dataId) => dataId.id === data.id) ? (
+        <Tag color="success">form sudah diisi</Tag>
+      ) : (
+        <Tag color="error">form belum diisi</Tag>
+      )}
     </section>
   );
 };

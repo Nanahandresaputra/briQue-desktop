@@ -5,13 +5,14 @@ import { useSelector } from "react-redux";
 import CardMultiForm from "../../components/multi-form/card-multi-form";
 
 const MultiForm = () => {
-  const { getServices } = useSelector((state) => state.briQueReducer);
+  const { getServices, listForm } = useSelector((state) => state.briQueReducer);
   const navigate = useNavigate();
   const navigatePage = () => {
     navigate("/");
   };
 
-  console.log(getServices);
+  console.log(getServices?.length === listForm?.length);
+
   return (
     <section className="h-full max-h-[550px]">
       <TopBar>Multi Form</TopBar>
@@ -25,14 +26,16 @@ const MultiForm = () => {
           </h1>
           <div className="space-y-5">
             {getServices?.map((data, index) => (
-              <CardMultiForm data={data} key={index}>
+              <CardMultiForm data={data} key={index} listForm={listForm}>
                 {data.displayName}
               </CardMultiForm>
             ))}
           </div>
         </div>
       </div>
-      <Footer btnDisabled={true} onClick={navigatePage}>
+      <Footer
+        btnDisabled={getServices?.length === listForm?.length ? false : true}
+        onClick={navigatePage}>
         Selanjutnya
       </Footer>
     </section>

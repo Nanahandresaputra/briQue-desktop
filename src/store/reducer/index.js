@@ -4,6 +4,7 @@ let initialState = {
   formCategory: [],
   getServices: [],
   formStructure: [],
+  listForm: [],
 };
 
 const briQueReducer = (state = initialState, action) => {
@@ -14,6 +15,8 @@ const briQueReducer = (state = initialState, action) => {
       return { ...state, getServices: action.payload };
     case BRIQUE_ACTION_TYPE.FORM_STRUCTURES:
       return { ...state, formStructure: action.payload };
+    case BRIQUE_ACTION_TYPE.FORM_LIST:
+      return { ...state, listForm: action.payload };
 
     default:
       return state;

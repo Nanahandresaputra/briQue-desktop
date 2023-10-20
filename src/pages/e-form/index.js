@@ -8,9 +8,13 @@ import { formatter } from "../../helpers/formatter";
 import { formStructureDummy } from "./../../dummy-data/form-structure";
 import { terbilangFormat } from "../../helpers/terbilang";
 import { openNotifications } from "../../helpers/notification";
+import moment from "moment/moment";
+import { encryptContent } from "../../helpers/encrypt";
 
 const Eform = () => {
-  const { formStructure, listForm } = useSelector((state) => state.briQueReducer);
+  const { formStructure, listForm, getServices } = useSelector(
+    (state) => state.briQueReducer
+  );
   const [dynamicFields, setDynamicFields] = useState([]);
   const [form] = Form.useForm();
   let { id } = useParams();
@@ -18,47 +22,116 @@ const Eform = () => {
 
   const dispatch = useDispatch();
 
+  let getFormValueId = listForm?.find((dataId) => dataId.id === dataParams.id);
+
   useEffect(() => {
-    // dispatch(BRIQUE_ACTION.formStructureAction(dataParams.name)).catch(
-    //   ({ errorMssg }) => {
-    //     openNotifications("error", "Error", errorMssg);
-    //   }
-    // );
+    dispatch(BRIQUE_ACTION.formStructureAction(dataParams.name)).catch(
+      ({ errorMssg }) => {
+        openNotifications("error", "Error", errorMssg);
+      }
+    );
+
+    if (getFormValueId) {
+      form.setFieldsValue(getFormValueId?.form);
+    }
 
     //dummy
-    dispatch(BRIQUE_ACTION.setFormStructure(formStructureDummy));
-  }, []);
+    // dispatch(BRIQUE_ACTION.setFormStructure(formStructureDummy));
+  }, [dispatch, getFormValueId]);
 
-  console.log(formStructure);
   const navigate = useNavigate();
+
+  let dynamicDefaultFields = (data) => {
+    if (getFormValueId) {
+      return !Object.keys(getFormValueId.form)?.find(
+        (fieldName) => fieldName === data.fieldName
+      );
+    } else {
+      return dynamicFields?.find((field) => field.name === data.fieldName);
+    }
+  };
+
+  const submissionFunctions = () => {
+    let body = {
+      outletCode: "0206",
+      bookingDate: moment().format("YYYY-MM-DD"),
+      email: "",
+      source: 2,
+      isSpecial: 0,
+      listForm,
+    };
+
+    dispatch(BRIQUE_ACTION.submissionAction(encryptContent(body)))
+      .then(() => {
+        openNotifications("success", "Success");
+        navigate("/booking-success");
+      })
+      .catch(({ errorMssg }) => {
+        openNotifications("error", "Error", errorMssg);
+      });
+  };
 
   const handleSubmit = () => {
     form.submit();
     form
       .validateFields()
       .then((res) => {
-        let curencyKeys = formStructure.fields?.filter((datas) => datas.constraint.formatCurrency === true)?.map((data) => data.fieldName);
-        let objKey = Object.keys(res);
-        let keyTrueCurrencies = curencyKeys.filter((element) => objKey.includes(element)).toString();
-        let sendForm = {
-          ...res,
-          [keyTrueCurrencies]: `${res[keyTrueCurrencies]}`.replace(/[^0-9]/g, ""),
-          briqueFormName: formStructure.formName,
-        };
-        if (res[keyTrueCurrencies]) {
-          dispatch(BRIQUE_ACTION.setListForm([...listForm, { ...dataParams, form: sendForm }]));
+        if (getServices?.length > 1) {
+          let curencyKeys = formStructure.fields
+            ?.filter((datas) => datas.constraint.formatCurrency === true)
+            ?.map((data) => data.fieldName);
+          let objKey = Object.keys(res);
+          let keyTrueCurrencies = curencyKeys
+            .filter((element) => objKey.includes(element))
+            .toString();
+          let sendForm = {
+            ...res,
+            [keyTrueCurrencies]: `${res[keyTrueCurrencies]}`.replace(
+              /[^0-9]/g,
+              ""
+            ),
+            briqueFormName: formStructure.formName,
+          };
+
+          if (res[keyTrueCurrencies]) {
+            let index = listForm?.findIndex(
+              (data) => data.id === dataParams.id
+            );
+            getFormValueId
+              ? (listForm[index].form = sendForm)
+              : dispatch(
+                  BRIQUE_ACTION.setListForm([
+                    ...listForm,
+                    { ...dataParams, form: sendForm },
+                  ])
+                );
+          } else {
+            let index = listForm?.findIndex(
+              (data) => data.id === dataParams.id
+            );
+
+            getFormValueId
+              ? (listForm[index].form = {
+                  ...res,
+                  briqueFormName: formStructure.formName,
+                })
+              : dispatch(
+                  BRIQUE_ACTION.setListForm([
+                    ...listForm,
+                    {
+                      ...dataParams,
+                      form: {
+                        ...res,
+                        briqueFormName: formStructure.formName,
+                      },
+                    },
+                  ])
+                );
+          }
+          navigate(-1);
         } else {
-          dispatch(
-            BRIQUE_ACTION.setListForm([
-              ...listForm,
-              {
-                ...dataParams,
-                form: { ...res, briqueFormName: formStructure.formName },
-              },
-            ])
-          );
+          submissionFunctions();
         }
-        navigate(-1);
       })
       .catch((err) => console.log(err));
   };
@@ -67,14 +140,17 @@ const Eform = () => {
     <section className="h-full">
       <TopBar>{formStructure.formDisplayName}</TopBar>
       <div className="mt-5 flex flex-col items-center h-full">
-        <p className="text-white text-lg text-start">Pastikan data di bawah sudah sesuai dengan data diri kamu</p>
-        <div className={`w-full ${formStructure.fields?.length < 6 ? "h-full" : "h-auto"} flex justify-center`}>
+        <p className="text-white text-lg text-start">
+          Pastikan data di bawah sudah sesuai dengan data diri kamu
+        </p>
+        <div
+          className={`w-full ${
+            formStructure.fields?.length < 6 ? "h-full" : "h-auto"
+          } flex justify-center`}>
           <Form
             layout="vertical"
             form={form}
-            // onFinish={handleSubmit}
-            className="bg-white px-4 py-7 w-10/12 shadow-lg rounded-lg"
-          >
+            className="bg-white px-4 py-7 w-10/12 shadow-lg rounded-lg">
             {formStructure.fields?.map((data, index) =>
               data.fieldType === "selection" ? (
                 <Form.Item
@@ -86,13 +162,14 @@ const Eform = () => {
                       required: true,
                       message: `masukan ${data.fieldDisplayName}`,
                     },
-                  ]}
-                >
+                  ]}>
                   <Select
                     size="large"
                     placeholder={`----- Pilih ${data.fieldDisplayName} -----`}
                     onChange={(e) => {
-                      let obj = data.selections?.find((datas) => datas.selection === e).dynamicFields;
+                      let obj = data.selections?.find(
+                        (datas) => datas.selection === e
+                      ).dynamicFields;
 
                       setDynamicFields(obj);
                     }}
@@ -102,14 +179,19 @@ const Eform = () => {
                     }))}
                   />
                 </Form.Item>
-              ) : dynamicFields?.find((field) => field.name === data.fieldName) ? null : (
+              ) : dynamicDefaultFields(data) ? null : (
                 <Form.Item
                   key={index}
                   name={data.fieldName}
                   label={data.fieldDisplayName}
                   rules={[
                     {
-                      required: !dynamicFields?.find((field) => field.name === data.fieldName) && data.isMandatory ? true : false,
+                      required:
+                        !dynamicFields?.find(
+                          (field) => field.name === data.fieldName
+                        ) && data.isMandatory
+                          ? true
+                          : false,
                       message: `masukan ${data.fieldDisplayName}`,
                     },
                     {
@@ -118,10 +200,15 @@ const Eform = () => {
                     },
                     {
                       min: data.minLength > 0 ? data.minLength : false,
-                      message: `masukan minimal ${data.minLength} dan maksimal ${data.maxLength}  ${data.constraint.acceptNumber ? "digit angka" : "karakter"} `,
+                      message: `masukan minimal ${
+                        data.minLength
+                      } dan maksimal ${data.maxLength}  ${
+                        data.constraint.acceptNumber
+                          ? "digit angka"
+                          : "karakter"
+                      } `,
                     },
-                  ]}
-                >
+                  ]}>
                   {data.constraint.formatCurrency === true ? (
                     <Input
                       prefix="Rp"
@@ -134,11 +221,14 @@ const Eform = () => {
                         let terbilangValue = terbilangFormat(value);
                         form.setFieldsValue({
                           [data.fieldName]: formattedValue,
-                          [data.constraint.allowedSymbols.split(" ")[0]]: `${terbilangValue} rupiah`,
+                          [data.constraint.allowedSymbols.split(
+                            " "
+                          )[0]]: `${terbilangValue} rupiah`,
                         });
                       }}
                     />
-                  ) : data.constraint.acceptNumber === true && data.constraint.acceptAlphabet === false ? (
+                  ) : data.constraint.acceptNumber === true &&
+                    data.constraint.acceptAlphabet === false ? (
                     <Input
                       placeholder={`${data.fieldDisplayName}`}
                       size="large"
@@ -151,20 +241,30 @@ const Eform = () => {
                       }}
                     />
                   ) : data.fieldType === "terbilang" ? (
-                    <Input placeholder={`${data.fieldDisplayName}`} size="large" readOnly />
-                  ) : data.constraint.acceptNumber === false && data.constraint.acceptAlphabet === true ? (
+                    <Input
+                      placeholder={`${data.fieldDisplayName}`}
+                      size="large"
+                      readOnly
+                    />
+                  ) : data.constraint.acceptNumber === false &&
+                    data.constraint.acceptAlphabet === true ? (
                     <Input
                       placeholder={`${data.fieldDisplayName}`}
                       size="large"
                       onChange={(e) => {
-                        const value = e.target.value.replace(/\d+|^\s+$/g, "").replace(/\s+/g, " ");
+                        const value = e.target.value
+                          .replace(/\d+|^\s+$/g, "")
+                          .replace(/\s+/g, " ");
                         form.setFieldsValue({
                           [data.fieldName]: value,
                         });
                       }}
                     />
                   ) : (
-                    <Input placeholder={`${data.fieldDisplayName}`} size="large" />
+                    <Input
+                      placeholder={`${data.fieldDisplayName}`}
+                      size="large"
+                    />
                   )}
                 </Form.Item>
               )
@@ -172,7 +272,11 @@ const Eform = () => {
           </Form>
         </div>
         <div className="bottom-0 w-full z-30 sticky bg-[#E8F3FC]  flex justify-center space-x-8 py-4 shadow-lg">
-          <Button onClick={handleSubmit} type="primary" className="bg-blue-700 w-80 text-lg" size="large">
+          <Button
+            onClick={handleSubmit}
+            type="primary"
+            className="bg-blue-700 w-80 text-lg"
+            size="large">
             Submit{" "}
           </Button>
         </div>{" "}
@@ -308,3 +412,15 @@ onChange={(e) => {
 //      return "hanya masukan angka";
 //    }
 //  };
+
+//  else {
+//           dispatch(
+//             BRIQUE_ACTION.setListForm([
+//               ...listForm,
+//               {
+//                 ...dataParams,
+//                 form: { ...res, briqueFormName: formStructure.formName },
+//               },
+//             ])
+//           );
+//         }

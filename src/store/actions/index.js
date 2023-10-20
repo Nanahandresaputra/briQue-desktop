@@ -40,6 +40,13 @@ const setListForm = (payload) => {
   };
 };
 
+const setSubmission = (payload) => {
+  return {
+    type: BRIQUE_ACTION_TYPE.SUBMISSION,
+    payload,
+  };
+};
+
 const formCategoryAction = () => {
   return (dispatch) => {
     return new Promise((resolve, reject) => {
@@ -92,7 +99,35 @@ const formStructureAction = (formName) => {
   };
 };
 
+const submissionAction = (data) => {
+  return (dispatch) => {
+    return new Promise((resolve, reject) => {
+      axios({
+        method: "POST",
+        url: `${apiConfig.baseUrl}/${apiConfig.formSubmission}`,
+        data,
+      })
+        .then(({ data }) => {
+          if (data.errorCode === "1000") {
+            dispatch(setSubmission(data));
+            resolve(data);
+          } else {
+            reject(data);
+          }
+        })
+        .catch((error) => {
+          if (error.name && error.name === "AxiosError") {
+            reject({ errorCode: error.code, errorMssg: error.message });
+          } else {
+            reject(error);
+          }
+        });
+    });
+  };
+};
+
 export const BRIQUE_ACTION = {
+  submissionAction,
   formCategoryAction,
   setGetServices,
   formStructureAction,

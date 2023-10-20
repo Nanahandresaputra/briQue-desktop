@@ -5,12 +5,17 @@ import { BsBank2 } from "react-icons/bs";
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import QueuePrint from "../../components/queue-print";
-
+import moment from "moment/min/moment-with-locales";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 const BookingSuccess = () => {
+  const { submissionData } = useSelector((state) => state.briQueReducer);
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
+  const navigate = useNavigate();
+  console.log(submissionData);
   return (
     <section className="flex flex-col h-full space-y-5 items-center ">
       <h1 className="font-bold text-6xl/3">
@@ -21,27 +26,48 @@ const BookingSuccess = () => {
         <BsFillCheckCircleFill className="text-5xl text-center text-green-500 bg-white rounded-full p-2 absolute -mt-8" />
         <div className="bg-white w-full flex flex-col items-center py-9">
           <h1 className="text-blue-900 text-xl/[1px] ">Reservasi Berhasil</h1>
-          <p className="text-4xl/[2px]  font-bold text-blue-900">C004</p>
+          <p className="text-4xl/[2px]  font-bold text-blue-900">
+            {submissionData.queueNo}
+          </p>
           <div>
-            <QRCode value="briqueNana" />
-            <p className="text-xs text-gray-400 text-center italic">BQ2BHYU67OI4HPO9Y</p>
+            <QRCode value={submissionData.bookingCode} />
+            <p className="text-xs text-gray-400 text-center italic">
+              {submissionData.bookingCode}
+            </p>
           </div>
-          <div className="grid grid-cols-5  mt-2">
-            <p className="text-sm/[1px] font-semibold text-blue-900 col-span-2">Nomor Referensi</p>
-            <p className="text-sm/[1px] font-semibold text-blue-900 col-span-1 text-center">:</p>
-            <p className="text-sm/[1px] font-semibold text-blue-900 col-span-2">-</p>
-            <p className="text-sm/[1px] font-semibold text-blue-900 col-span-2">Tanggal</p>
-            <p className="text-sm/[1px] font-semibold text-blue-900 col-span-1 text-center">:</p>
-            <p className="text-sm/[1px] font-semibold text-blue-900 col-span-2 ">{`${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear() + 1}`}</p>
+          <div className="grid grid-cols-2 mt-2">
+            <p className="text-sm/[1px] font-semibold text-blue-900">
+              Nomor Referensi
+            </p>
+
+            <p className="text-sm/[1px] font-semibold text-blue-900">
+              {submissionData.referenceCodeList.length > 0
+                ? submissionData.referenceCodeList.toString()
+                : "-"}
+            </p>
+            <p className="text-sm/[1px] font-semibold text-blue-900">Tanggal</p>
+
+            <p className="text-sm/[1px] font-semibold text-blue-900 ">
+              {moment().locale("id").format("LLLL")}
+            </p>
           </div>
         </div>
       </div>
       <div className="flex justify-center space-x-8">
-        <Button type="primary" className="p-5 bg-blue-700 font-semibold flex items-center space-x-1">
-          <BsBank2 className="text-2xl" /> <span className="text-xl">Halaman Utama</span>
+        <Button
+          type="primary"
+          className="p-5 bg-blue-700 font-semibold flex items-center space-x-1">
+          <BsBank2 className="text-2xl" />{" "}
+          <span className="text-xl" onClick={() => navigate("/print-view")}>
+            Halaman Utama
+          </span>
         </Button>
-        <Button type="primary" className="p-5 bg-blue-700 font-semibold flex items-center space-x-1" onClick={handlePrint}>
-          <FaFileAlt className="text-2xl" /> <span className="text-xl">Cetak Nomor Antrian</span>
+        <Button
+          type="primary"
+          className="p-5 bg-blue-700 font-semibold flex items-center space-x-1"
+          onClick={handlePrint}>
+          <FaFileAlt className="text-2xl" />{" "}
+          <span className="text-xl">Cetak Nomor Antrian</span>
         </Button>
       </div>
 

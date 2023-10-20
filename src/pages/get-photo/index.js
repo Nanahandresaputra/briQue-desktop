@@ -6,11 +6,14 @@ import { useState } from "react";
 import TopBar from "../../components/topbar";
 import FooterSubmit from "../../components/get-photo/footer-submit";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const width = 400;
 const height = 450;
 
 const GetPhoto = () => {
+  const { getServices } = useSelector((state) => state.briQueReducer);
+
   const { webcamRef, boundingBox } = useFaceDetection({
     faceDetectionOptions: {
       model: "short",
@@ -33,8 +36,16 @@ const GetPhoto = () => {
 
   const capture = () => {
     let photo = webcamRef.current.getScreenshot();
-    setCapture(photo);
-    navigate("/multi-form");
+    localStorage.setItem("fotoNasabah", photo);
+    if (getServices?.length > 1) {
+      navigate("/multi-form");
+    } else {
+      let params = JSON.stringify({
+        name: getServices[0].name,
+        id: getServices[0].id,
+      });
+      navigate(`/eform/${params}`);
+    }
   };
 
   return (

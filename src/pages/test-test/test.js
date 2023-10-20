@@ -1,15 +1,30 @@
 import { Button } from "antd";
 import { useDispatch } from "react-redux";
 import { BRIQUE_ACTION } from "../../store/actions";
-import { openNotifications } from "./../../helpers/notification/index";
 import { v4 as uuidv4 } from "uuid";
+import { encryptContent } from "./../../helpers/encrypt/index";
+import moment from "moment/min/moment-with-locales";
 
 const Testing = () => {
-  const dispatch = useDispatch();
-  let id = uuidv4();
+  let body = {
+    outletCode: "0206",
+    bookingDate: moment().format("YYYY-MM-DD"),
+    email: "test@example.com",
+    source: 2,
+    isSpecial: 0,
+    listForm: [
+      {
+        nomorRekening: "423432423777767",
+        namaNasabah: "kjkjkkj",
+        briqueFormName: "transaksiLainnyaFinansial",
+      },
+    ],
+  };
+
+  let encrypt = encryptContent(body);
 
   const apiHandler = () => {
-    console.log(id.replace(/-/gi, ""));
+    console.log(encrypt);
     // dispatch(BRIQUE_ACTION.formCategoryAction()).catch(({ errorMssg }) => {
     //   if (errorMssg) {
     //     openNotifications("error", "Error", errorMssg);

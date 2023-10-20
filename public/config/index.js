@@ -13,5 +13,4 @@ window.samleAppConfig = {
   formStructure: "formStructure?formName=",
   formSubmission: "formSubmission",
   uploadPhoto: "uploadPhoto",
-  // secretKey: process.env.REACT_APP_SECRET_KEY,
 };

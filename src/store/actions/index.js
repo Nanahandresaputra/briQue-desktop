@@ -153,6 +153,34 @@ const submissionAction = (data) => {
   };
 };
 
+const uploadPhotoAction = (data) => {
+  return (dispatch) => {
+    dispatch(setIsGetLoading(true));
+    return new Promise((resolve, reject) => {
+      axios({
+        method: "POST",
+        url: `${apiConfig.baseUrl}/${apiConfig.uploadPhoto}`,
+        data,
+      })
+        .then(({ data }) => {
+          if (data.errorCode === "1000") {
+            resolve(data);
+          } else {
+            reject(data);
+          }
+        })
+        .catch((error) => {
+          if (error.name && error.name === "AxiosError") {
+            reject({ errorCode: error.code, errorMssg: error.message });
+          } else {
+            reject(error);
+          }
+        })
+        .finally(() => dispatch(setIsGetLoading(false)));
+    });
+  };
+};
+
 export const BRIQUE_ACTION = {
   submissionAction,
   formCategoryAction,
@@ -164,4 +192,5 @@ export const BRIQUE_ACTION = {
   setIsGetLoading,
   setGetEmail,
   setPhotoBase64,
+  uploadPhotoAction,
 };

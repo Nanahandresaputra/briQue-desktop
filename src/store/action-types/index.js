@@ -7,6 +7,7 @@ const IS_GET_LOADING = "isGetLoading";
 const GET_EMAIL = "getEmail";
 const GET_PHOTO = "getPhoto";
 const NETWORK_ERROR = "networkError";
+const UPLOAD_PHOTO = "uploadPhoto";
 
 export const BRIQUE_ACTION_TYPE = {
   FORM_CATEGORIES,
@@ -18,4 +19,5 @@ export const BRIQUE_ACTION_TYPE = {
   GET_EMAIL,
   NETWORK_ERROR,
   GET_PHOTO,
+  UPLOAD_PHOTO,
 };

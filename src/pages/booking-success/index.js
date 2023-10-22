@@ -2,15 +2,18 @@ import { Button, QRCode } from "antd";
 import { BsFillCheckCircleFill } from "react-icons/bs";
 import { FaFileAlt } from "react-icons/fa";
 import { BsBank2 } from "react-icons/bs";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import QueuePrint from "../../components/queue-print";
 import moment from "moment/min/moment-with-locales";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { formSubmissionDummy } from "../../dummy-data/form-submission";
+import { BRIQUE_ACTION } from "../../store/actions";
+import { openNotifications } from "../../helpers/notification";
 const BookingSuccess = () => {
   // const { submissionData } = useSelector((state) => state.briQueReducer);
+  const { photoBase64 } = useSelector((state) => state.briQueReducer);
 
   //dummy submission
   let submissionData = formSubmissionDummy;
@@ -21,6 +24,22 @@ const BookingSuccess = () => {
   });
 
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (submissionData.bookingCode && photoBase64) {
+      dispatch(BRIQUE_ACTION.uploadPhotoAction({ bookingCode: submissionData.bookingCode, photoBase64: photoBase64.replace("data:image/webp;base64,", "") })).catch(({ errorMssg }) => {
+        openNotifications("error", "Error", errorMssg);
+      });
+    }
+  }, []);
+
+  // console.log({
+  //   bookingCode: submissionData.bookingCode,
+  //   photoBase64: photoBase64.replace("data:image/webp;base64,", ""),
+  // });
+
   return (
     <section className="flex flex-col h-full space-y-5 items-center ">
       <h3 className="font-bold text-6xl/3 ">

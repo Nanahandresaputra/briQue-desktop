@@ -6,7 +6,7 @@ const Loading = ({ children, isGetLoading }) => {
     return (
       <section className="relative h-full w-full">
         {children}
-        <div className="w-full h-full bg-black bg-opacity-20 flex items-center justify-center absolute top-0  z-50">
+        <div className="w-full h-full bg-black bg-opacity-40 flex items-center justify-center absolute top-0  z-50">
           <ClockLoader className="w-20" color="#E8F3FC" />
         </div>
       </section>

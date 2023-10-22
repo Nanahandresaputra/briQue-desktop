@@ -9,8 +9,9 @@ import { useDispatch } from "react-redux";
 import { BRIQUE_ACTION } from "../../store/actions";
 import { v4 as uuidv4 } from "uuid";
 
-const CardCategoryFinancial = ({ data, service, getServices }) => {
+const CardCategoryFinancial = ({ data, service, getServices, category }) => {
   const dispatch = useDispatch();
+
   let icons = [
     {
       type: "financial",
@@ -58,6 +59,12 @@ const CardCategoryFinancial = ({ data, service, getServices }) => {
     dispatch(BRIQUE_ACTION.setGetServices([...getServices, dataService]));
   };
 
+  console.log(category.name);
+
+  let disabledMaxLength = () => {
+    return getServices.length > 8 && category.name === "financial" ? true : getServices.length > 3 && category.name === "nonFinancial" ? true : false;
+  };
+
   const decrement = () => {
     // let sameValue = getServices.sameValueOf(data.id);
     let sameValue = getServices?.filter((data) => data.name === dataService.name).at(-1);
@@ -76,7 +83,7 @@ const CardCategoryFinancial = ({ data, service, getServices }) => {
               -
             </Button>
             <p className="text-xl font-medium">{counter}</p>
-            <Button disabled={getServices.length > 8 ? true : false} onClick={increment}>
+            <Button disabled={disabledMaxLength()} onClick={increment}>
               +
             </Button>
           </div>

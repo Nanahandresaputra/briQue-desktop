@@ -6,10 +6,19 @@ let initialState = {
   formStructure: [],
   listForm: [],
   submissionData: {},
+  isGetLoading: false,
+  getEmail: "",
+  photoBase64: null,
 };
 
 const briQueReducer = (state = initialState, action) => {
   switch (action.type) {
+    case BRIQUE_ACTION_TYPE.IS_GET_LOADING:
+      return { ...state, isGetLoading: action.payload };
+    case BRIQUE_ACTION_TYPE.GET_PHOTO:
+      return { ...state, photoBase64: action.payload };
+    case BRIQUE_ACTION_TYPE.GET_EMAIL:
+      return { ...state, getEmail: action.payload };
     case BRIQUE_ACTION_TYPE.FORM_CATEGORIES:
       return { ...state, formCategory: action.payload };
     case BRIQUE_ACTION_TYPE.GET_SERVICES:

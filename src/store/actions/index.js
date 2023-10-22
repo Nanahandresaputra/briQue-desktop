@@ -47,8 +47,30 @@ const setSubmission = (payload) => {
   };
 };
 
+const setIsGetLoading = (payload) => {
+  return {
+    type: BRIQUE_ACTION_TYPE.IS_GET_LOADING,
+    payload,
+  };
+};
+
+const setGetEmail = (payload) => {
+  return {
+    type: BRIQUE_ACTION_TYPE.GET_EMAIL,
+    payload,
+  };
+};
+
+const setPhotoBase64 = (payload) => {
+  return {
+    type: BRIQUE_ACTION_TYPE.GET_PHOTO,
+    payload,
+  };
+};
+
 const formCategoryAction = () => {
   return (dispatch) => {
+    dispatch(setIsGetLoading(true));
     return new Promise((resolve, reject) => {
       axios({
         method: "GET",
@@ -68,13 +90,15 @@ const formCategoryAction = () => {
           } else {
             reject(error);
           }
-        });
+        })
+        .finally(() => dispatch(setIsGetLoading(false)));
     });
   };
 };
 
 const formStructureAction = (formName) => {
   return (dispatch) => {
+    dispatch(setIsGetLoading(true));
     return new Promise((resolve, reject) => {
       axios({
         method: "GET",
@@ -94,13 +118,15 @@ const formStructureAction = (formName) => {
           } else {
             reject(error);
           }
-        });
+        })
+        .finally(() => dispatch(setIsGetLoading(false)));
     });
   };
 };
 
 const submissionAction = (data) => {
   return (dispatch) => {
+    dispatch(setIsGetLoading(true));
     return new Promise((resolve, reject) => {
       axios({
         method: "POST",
@@ -121,7 +147,8 @@ const submissionAction = (data) => {
           } else {
             reject(error);
           }
-        });
+        })
+        .finally(() => dispatch(setIsGetLoading(false)));
     });
   };
 };
@@ -134,4 +161,7 @@ export const BRIQUE_ACTION = {
   setFormCategoryApi,
   setFormStructure,
   setListForm,
+  setIsGetLoading,
+  setGetEmail,
+  setPhotoBase64,
 };

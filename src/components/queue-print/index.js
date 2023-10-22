@@ -2,49 +2,37 @@ import { QRCode } from "antd";
 import moment from "moment/min/moment-with-locales";
 import { forwardRef } from "react";
 import { useSelector } from "react-redux";
+import { formSubmissionDummy } from "../../dummy-data/form-submission";
 
 const QueuePrint = forwardRef((props, ref) => {
-  const { submissionData } = useSelector((state) => state.briQueReducer);
-  console.log(submissionData);
+  // let submissionData = props.submissionData;
+
+  //dummy submissionData
+  let submissionData = formSubmissionDummy;
 
   return (
-    <section
-      className="bg-white h-full w-full flex flex-col items-center"
-      ref={ref}>
-      <div className="flex items-center my-4">
-        <img
-          src="./assets/svg/bri-black.svg"
-          alt="logo"
-          className="w-24 h-24"
-        />
+    <section className="bg-white h-full flex flex-col items-center w-[80mm]" ref={ref}>
+      <div className="flex justify-center items-center my-4 w-full">
+        <img src="./assets/svg/bri-black.svg" alt="logo" className="w-8 h-8" />
         <div>
-          <h1 className="text-3xl/[1px] font-bold">BANK RAKYAT INDONESIA</h1>
+          <p className="text-lg/[0px] font-bold">BANK RAKYAT INDONESIA</p>
         </div>
       </div>
-      <div className="border-dashed w-11/12" />
+      <div className="border-dashed border-2 w-11/12" />
       <div className="w-full flex flex-col items-center mt-2">
-        <h1 className="text-xl">NOMOR ANTRIAN ANDA</h1>
-        <p className="text-6xl/[1px] font-bold">{submissionData.queueNo}</p>
-        <div className="-mt-3">
-          <QRCode value={submissionData.bookingCode} size={200} />
-          <p className="text-xl text-center">{submissionData.bookingCode} </p>
+        <p className="text-xs font-bold">NOMOR ANTRIAN ANDA</p>
+        <p className="text-[24px]/[0px] font-bold">{submissionData.queueNo}</p>
+        <div className="">
+          <QRCode value={submissionData.bookingCode} size={140} />
+          <p className="text-xs text-center">{submissionData.bookingCode} </p>
         </div>
 
-        <div className="flex items-center space-x-8 mt-2">
-          <p className="text-lg font-semibold col-span-2">Nomor Referensi</p>
-          <p className="text-lg/[1px] font-semibold col-span-2">
-            {submissionData.referenceCodeList.length > 0
-              ? submissionData.referenceCodeList.toString()
-              : "-"}
-          </p>
-        </div>
-        <p className="text-lg font-semibold">
-          SILAKAN MENUNGGU NOMOR ANTRIAN ANDA DIPANGGIL
-        </p>
-        <p className="text-xl font-semibold col-span-2 ">
-          {" "}
-          {moment().locale("id").format("LLLL")}
-        </p>
+        {/* <div className="text-center text-sm mt-2">
+          <p className=" font-bold col-span-2">Nomor Referensi</p>
+          <p className="font-bold col-span-2">{submissionData.referenceCodeList.length > 0 ? submissionData.referenceCodeList.toString() : "-"}</p>
+        </div> */}
+        <p className="text-[10px]/[1px] font-bold text-center">SILAKAN MENUNGGU NOMOR ANTRIAN ANDA DIPANGGIL</p>
+        <p className="text-[10px]/[1px] font-bold text-center "> {moment().locale("id").format("LLLL").toUpperCase()}</p>
       </div>
     </section>
   );

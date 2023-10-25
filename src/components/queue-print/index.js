@@ -1,17 +1,18 @@
 import { QRCode } from "antd";
 import moment from "moment/min/moment-with-locales";
 import { forwardRef } from "react";
-import { useSelector } from "react-redux";
 import { formSubmissionDummy } from "../../dummy-data/form-submission";
 
 const QueuePrint = forwardRef((props, ref) => {
-  // let submissionData = props.submissionData;
+  let submissionData = props.submissionData;
 
   //dummy submissionData
-  let submissionData = formSubmissionDummy;
+  // let submissionData = formSubmissionDummy;
 
   return (
-    <section className="bg-white h-full flex flex-col items-center w-[80mm]" ref={ref}>
+    <section
+      className="bg-white h-full flex flex-col items-center w-[80mm]"
+      ref={ref}>
       <div className="flex justify-center items-center my-4 w-full">
         <img src="./assets/svg/bri-black.svg" alt="logo" className="w-8 h-8" />
         <div>
@@ -19,20 +20,24 @@ const QueuePrint = forwardRef((props, ref) => {
         </div>
       </div>
       <div className="border-dashed border-2 w-11/12" />
-      <div className="w-full flex flex-col items-center mt-2">
-        <p className="text-xs font-bold">NOMOR ANTRIAN ANDA</p>
-        <p className="text-[24px]/[0px] font-bold">{submissionData.queueNo}</p>
-        <div className="">
-          <QRCode value={submissionData.bookingCode} size={140} />
-          <p className="text-xs text-center">{submissionData.bookingCode} </p>
+      <div className="w-full  mt-2">
+        <p className="text-xs font-bold text-center">NOMOR ANTRIAN ANDA</p>
+        <p className="text-[24px]/[0px] font-bold text-center">
+          {submissionData?.queueNo}
+        </p>
+        <div className="w-full flex flex-col items-center">
+          <QRCode value={submissionData?.bookingCode} size={140} />
+          <p className="text-xs text-center">{submissionData?.bookingCode} </p>
         </div>
-
-        {/* <div className="text-center text-sm mt-2">
-          <p className=" font-bold col-span-2">Nomor Referensi</p>
-          <p className="font-bold col-span-2">{submissionData.referenceCodeList.length > 0 ? submissionData.referenceCodeList.toString() : "-"}</p>
-        </div> */}
-        <p className="text-[10px]/[1px] font-bold text-center">SILAKAN MENUNGGU NOMOR ANTRIAN ANDA DIPANGGIL</p>
-        <p className="text-[10px]/[1px] font-bold text-center "> {moment().locale("id").format("LLLL").toUpperCase()}</p>
+        <p className="text-[10px] font-semibold text-center">
+          SISA ANTRIAN: {submissionData?.queueLeft} ORANG
+        </p>
+        <p className="text-[10px] text-center font-semibold">
+          SILAKAN MENUNGGU NOMOR ANTRIAN ANDA DIPANGGIL
+        </p>
+        <p className="text-[10px] text-center font-semibold ">
+          {moment().locale("id").format("LLLL").toUpperCase()}
+        </p>
       </div>
     </section>
   );

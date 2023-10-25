@@ -2,12 +2,14 @@ import { Button, Tag } from "antd";
 import { LuClipboardEdit } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 
-const CardMultiForm = ({ children, data, listForm }) => {
+const CardMultiForm = ({ children, data, listForm, stateData }) => {
   const navigate = useNavigate();
   let params = JSON.stringify({
     name: data.name,
     id: data.id,
   });
+
+  console.log(listForm);
 
   return (
     <section className="p-3  h-full bg-gray-50 rounded-lg shadow-2xl text-blue-900">
@@ -18,7 +20,7 @@ const CardMultiForm = ({ children, data, listForm }) => {
           icon={<LuClipboardEdit className="text-xl" />}
           size="large"
           onClick={() => {
-            navigate(`/eform/${params}`);
+            navigate(`/eform/${params}`, { state: stateData });
           }}
         />
       </div>

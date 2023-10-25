@@ -5,6 +5,8 @@ import { BRIQUE_ACTION_TYPE } from "../action-types";
 
 const apiConfig = window.samleAppConfig;
 
+console.log(apiConfig);
+
 // export const formCategoryApi = async () => {
 //   const category = await axios.get(
 //     `${apiConfig.baseUrl}/${apiConfig.formCategory}`
@@ -78,6 +80,7 @@ const formCategoryAction = () => {
       })
         .then(({ data }) => {
           if (data.errorCode === "1000") {
+            localStorage.setItem("formData", JSON.stringify(data));
             dispatch(setFormCategoryApi(data));
             resolve(data);
           } else {

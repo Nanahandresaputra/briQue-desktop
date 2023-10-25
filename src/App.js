@@ -9,11 +9,16 @@ import BookingSuccess from "./pages/booking-success";
 import QueuePrint from "./components/queue-print";
 import Loading from "./components/loading/index";
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 function App() {
   const { isGetLoading } = useSelector((state) => state.briQueReducer);
 
-  let { branchCode } = localStorage;
+  let { branchCode, bgUrl } = localStorage;
+
+  useEffect(() => {
+    localStorage.setItem("bgUrl", "./assets/svg/background.svg");
+  }, []);
 
   return (
     <Loading isGetLoading={isGetLoading}>
@@ -21,17 +26,23 @@ function App() {
         <div
           className="h-[768px] w-[1024px]  overflow-auto"
           style={{
-            backgroundImage: `url(./assets/svg/background.svg)`,
-          }}
-        >
+            backgroundImage: `url(${bgUrl})`,
+            backgroundSize: "100%",
+          }}>
           <Router>
             <Routes>
               <Route path="/brique" element={<Home />} />
-              <Route path="/brique/:id" element={<FinancialService />} />
+              <Route path="/transaction/:id" element={<FinancialService />} />
               <Route path="/foto-nasabah" element={<GetPhoto />} />
               <Route path="/testing" element={<Testing />} />
-              <Route path="/multi-form" element={<MultiForm outletCode={branchCode} />} />
-              <Route path="/eform/:id" element={<Eform outletCode={branchCode} />} />
+              <Route
+                path="/multi-form"
+                element={<MultiForm outletCode={branchCode} />}
+              />
+              <Route
+                path="/eform/:id"
+                element={<Eform outletCode={branchCode} />}
+              />
               <Route path="/booking-success" element={<BookingSuccess />} />
               <Route path="/print-view" element={<QueuePrint />} />
             </Routes>

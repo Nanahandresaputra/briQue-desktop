@@ -5,7 +5,7 @@ import { Camera } from "@mediapipe/camera_utils";
 import { useState } from "react";
 import TopBar from "../../components/topbar";
 import FooterSubmit from "../../components/get-photo/footer-submit";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Form, Input, Modal } from "antd";
 import { BRIQUE_ACTION } from "../../store/actions";
@@ -14,14 +14,17 @@ const width = 400;
 const height = 450;
 
 const GetPhoto = () => {
-  const { getServices, photoBase64 } = useSelector((state) => state.briQueReducer);
+  const { photoBase64, getEmail } = useSelector((state) => state.briQueReducer);
+
+  let { state } = useLocation();
 
   const { webcamRef, boundingBox } = useFaceDetection({
     faceDetectionOptions: {
       model: "short",
     },
     faceDetection: new FaceDetection.FaceDetection({
-      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
     }),
     camera: ({ mediaSrc, onFrame }) =>
       new Camera(mediaSrc, {
@@ -41,14 +44,14 @@ const GetPhoto = () => {
   };
 
   let navigateToForm = () => {
-    if (getServices?.length > 1) {
-      navigate("/multi-form");
+    if (state?.length > 1) {
+      navigate("/multi-form", { state: { getServices: state, getEmail } });
     } else {
       let params = JSON.stringify({
-        name: getServices[0].name,
-        id: getServices[0].id,
+        name: state?.[0].name,
+        id: state?.[0].id,
       });
-      navigate(`/eform/${params}`);
+      navigate(`/eform/${params}`, { state: params });
     }
   };
 
@@ -73,7 +76,11 @@ const GetPhoto = () => {
 
   return (
     <section className="h-full">
-      <Modal title="Masukan email" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+      <Modal
+        title="Masukan email"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}>
         <Form layout="vertical" form={form}>
           <Form.Item
             name="email"
@@ -87,8 +94,7 @@ const GetPhoto = () => {
                 required: true,
                 message: "masukan email yang valid",
               },
-            ]}
-          >
+            ]}>
             <Input placeholder="masukan email" size="large" />
           </Form.Item>
         </Form>
@@ -112,11 +118,30 @@ const GetPhoto = () => {
               }}
             />
           ))}
-          <Webcam ref={webcamRef} forceScreenshotSourceSize className={`${photoBase64 ? "hidden" : "block"} h-[${height}] w-[${width}] absolute`} />
-          <img src={photoBase64} alt="foto nasabah" className={`${photoBase64 ? "block" : "hidden"} h-[${height}] w-[${width}] absolute `} />
+          <Webcam
+            ref={webcamRef}
+            forceScreenshotSourceSize
+            className={`${
+              photoBase64 ? "hidden" : "block"
+            } h-[${height}] w-[${width}] absolute`}
+          />
+          <img
+            src={photoBase64}
+            alt="foto nasabah"
+            className={`${
+              photoBase64 ? "block" : "hidden"
+            } h-[${height}] w-[${width}] absolute `}
+          />
         </div>
-        <p className="text-white text-center text-lg font-semibold">[Foto Nasabah]</p>
-        <FooterSubmit navigateToForm={navigateToForm} showModal={showModal} capture={capture} photoBase64={photoBase64} />
+        <p className="text-white text-center text-lg font-semibold">
+          [Foto Nasabah]
+        </p>
+        <FooterSubmit
+          navigateToForm={navigateToForm}
+          showModal={showModal}
+          capture={capture}
+          photoBase64={photoBase64}
+        />
       </div>
     </section>
   );

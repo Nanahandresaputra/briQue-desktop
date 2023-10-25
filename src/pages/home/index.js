@@ -13,9 +13,10 @@ const Home = () => {
   let useQuery = () => new URLSearchParams(useLocation().search);
   const query = useQuery();
   useEffect(() => {
-    // dispatch(BRIQUE_ACTION.formCategoryAction()).catch(({ errorMssg }) => {
-    //   openNotifications("error", "Error", errorMssg);
-    // });
+    dispatch(BRIQUE_ACTION.formCategoryAction()).catch((err) => {
+      console.log(err);
+      openNotifications("error", "Error", err.errorMssg);
+    });
 
     localStorage.setItem("branchCode", query.get("branchCode"));
 
@@ -24,7 +25,7 @@ const Home = () => {
     dispatch(BRIQUE_ACTION.setPhotoBase64(null));
 
     //dummy
-    dispatch(BRIQUE_ACTION.setFormCategoryApi(formCategoryDummy));
+    // dispatch(BRIQUE_ACTION.setFormCategoryApi(formCategoryDummy));
   }, []);
 
   return (
@@ -37,8 +38,17 @@ const Home = () => {
         <h2 className="text-white font-semibold">Pilih Pelayanan</h2>
         <div className="flex justify-center items-center space-x-10">
           {formCategory.categories?.map((data, index) => (
-            <CardTransaction link={data.name} imgCover={data.name === "financial" ? "./assets/svg/financial.svg" : "./assets/svg/non-financial.svg"} key={index}>
-              <h1 className="text-2xl font-medium text-blue-900">{data.displayName}</h1>
+            <CardTransaction
+              link={data.name}
+              imgCover={
+                data.name === "financial"
+                  ? "./assets/svg/financial.svg"
+                  : "./assets/svg/non-financial.svg"
+              }
+              key={index}>
+              <h1 className="text-2xl font-medium text-blue-900">
+                {data.displayName}
+              </h1>
               <p className="text-gray-500 h-20 font-medium">
                 {data.forms
                   ?.slice(0, 3)

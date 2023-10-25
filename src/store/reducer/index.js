@@ -4,7 +4,7 @@ let initialState = {
   formCategory: [],
   getServices: [],
   formStructure: [],
-  listForm: [],
+  listForm: JSON.parse(localStorage.getItem("listForm")) || [],
   submissionData: {},
   isGetLoading: false,
   getEmail: "",

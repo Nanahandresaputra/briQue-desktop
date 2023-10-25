@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import TopBar from "../../components/topbar";
-import { Button, Form, Input, Select } from "antd";
+import { Button, DatePicker, Form, Input, Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { BRIQUE_ACTION } from "../../store/actions";
@@ -10,11 +10,10 @@ import { terbilangFormat } from "../../helpers/terbilang";
 import { openNotifications } from "../../helpers/notification";
 import moment from "moment/moment";
 import { encryptContent } from "../../helpers/encrypt";
+import { pembukaanRekening } from "../../dummy-data/dummy-form-pembukaan-rekening";
 
 const Eform = ({ outletCode }) => {
-  const { formStructure, listForm } = useSelector(
-    (state) => state.briQueReducer
-  );
+  const { formStructure, listForm } = useSelector((state) => state.briQueReducer);
   const [dynamicFields, setDynamicFields] = useState([]);
   const [form] = Form.useForm();
   let { id } = useParams();
@@ -27,22 +26,22 @@ const Eform = ({ outletCode }) => {
 
   const myRef = useRef(null);
 
-  console.log(state);
+  console.log(formStructure);
 
   useEffect(() => {
     myRef.current.scrollIntoView();
-    dispatch(BRIQUE_ACTION.formStructureAction(dataParams.name)).catch(
-      ({ errorMssg }) => {
-        openNotifications("error", "Error", errorMssg);
-      }
-    );
+    // dispatch(BRIQUE_ACTION.formStructureAction(dataParams.name)).catch(
+    //   ({ errorMssg }) => {
+    //     openNotifications("error", "Error", errorMssg);
+    //   }
+    // );
 
     if (getFormValueId) {
       form.setFieldsValue(getFormValueId?.form);
     }
 
     //dummy
-    // dispatch(BRIQUE_ACTION.setFormStructure(formStructureDummy));
+    dispatch(BRIQUE_ACTION.setFormStructure(pembukaanRekening));
   }, []);
 
   // lisForm
@@ -51,9 +50,7 @@ const Eform = ({ outletCode }) => {
 
   let dynamicDefaultFields = (data) => {
     if (getFormValueId) {
-      return !Object.keys(getFormValueId.form)?.find(
-        (fieldName) => fieldName === data.fieldName
-      );
+      return !Object.keys(getFormValueId.form)?.find((fieldName) => fieldName === data.fieldName);
     } else {
       return dynamicFields?.find((field) => field.name === data.fieldName);
     }
@@ -69,17 +66,18 @@ const Eform = ({ outletCode }) => {
       listForm,
     };
 
-    dispatch(BRIQUE_ACTION.submissionAction(encryptContent(body)))
-      .then(() => {
-        openNotifications("success", "Success");
-        navigate("/booking-success");
-      })
-      .catch(({ errorMssg }) => {
-        openNotifications("error", "Error", errorMssg);
-      });
+    // dispatch(BRIQUE_ACTION.submissionAction(encryptContent(body)))
+    //   .then(() => {
+    //     openNotifications("success", "Success");
+    //     navigate("/booking-success");
+    //   })
+    //   .catch(({ errorMssg }) => {
+    //     openNotifications("error", "Error", errorMssg);
+    //   });
 
     //offline mode
     // navigate("/booking-success");
+    console.log(body);
   };
 
   const handleSubmit = () => {
@@ -88,38 +86,20 @@ const Eform = ({ outletCode }) => {
       .validateFields()
       .then((res) => {
         if (state.getServices?.length > 1) {
-          let curencyKeys = formStructure.fields
-            ?.filter((datas) => datas.constraint.formatCurrency === true)
-            ?.map((data) => data.fieldName);
+          let curencyKeys = formStructure.fields?.filter((datas) => datas.constraint.formatCurrency === true)?.map((data) => data.fieldName);
           let objKey = Object.keys(res);
-          let keyTrueCurrencies = curencyKeys
-            .filter((element) => objKey.includes(element))
-            .toString();
+          let keyTrueCurrencies = curencyKeys.filter((element) => objKey.includes(element)).toString();
           let sendForm = {
             ...res,
-            [keyTrueCurrencies]: `${res[keyTrueCurrencies]}`.replace(
-              /[^0-9]/g,
-              ""
-            ),
+            [keyTrueCurrencies]: `${res[keyTrueCurrencies]}`.replace(/[^0-9]/g, ""),
             briqueFormName: formStructure.formName,
           };
 
           if (res[keyTrueCurrencies]) {
-            let index = listForm?.findIndex(
-              (data) => data.id === dataParams.id
-            );
-            getFormValueId
-              ? (listForm[index].form = sendForm)
-              : dispatch(
-                  BRIQUE_ACTION.setListForm([
-                    ...listForm,
-                    { ...dataParams, form: sendForm },
-                  ])
-                );
+            let index = listForm?.findIndex((data) => data.id === dataParams.id);
+            getFormValueId ? (listForm[index].form = sendForm) : dispatch(BRIQUE_ACTION.setListForm([...listForm, { ...dataParams, form: sendForm }]));
           } else {
-            let index = listForm?.findIndex(
-              (data) => data.id === dataParams.id
-            );
+            let index = listForm?.findIndex((data) => data.id === dataParams.id);
 
             getFormValueId
               ? (listForm[index].form = {
@@ -150,21 +130,10 @@ const Eform = ({ outletCode }) => {
   return (
     <section ref={myRef} className="h-full">
       <TopBar>{formStructure.formDisplayName}</TopBar>
-      <div
-        className={`${
-          formStructure.fields ? "flex" : "hidden"
-        } mt-5  flex-col items-center h-full`}>
-        <p className="text-white text-lg text-start">
-          Pastikan data di bawah sudah sesuai dengan data diri kamu
-        </p>
-        <div
-          className={`w-full ${
-            formStructure.fields?.length < 6 ? "h-full" : "h-auto"
-          } flex justify-center`}>
-          <Form
-            layout="vertical"
-            form={form}
-            className="bg-white px-4 py-7 w-10/12 shadow-lg rounded-lg">
+      <div className={`${formStructure.fields ? "flex" : "hidden"} mt-5  flex-col items-center h-full`}>
+        <p className="text-white text-lg text-start">Pastikan data di bawah sudah sesuai dengan data diri kamu</p>
+        <div className={`w-full ${formStructure.fields?.length < 6 ? "h-full" : "h-auto"} flex justify-center`}>
+          <Form layout="vertical" form={form} className="bg-white px-4 py-7 w-10/12 shadow-lg rounded-lg">
             {formStructure.fields?.map((data, index) =>
               data.fieldType === "selection" ? (
                 <Form.Item
@@ -176,22 +145,34 @@ const Eform = ({ outletCode }) => {
                       required: true,
                       message: `masukan ${data.fieldDisplayName}`,
                     },
-                  ]}>
-                  <Select
-                    size="large"
-                    placeholder={`----- Pilih ${data.fieldDisplayName} -----`}
-                    onChange={(e) => {
-                      let obj = data.selections?.find(
-                        (datas) => datas.selection === e
-                      ).dynamicFields;
+                  ]}
+                >
+                  {data.constraint.selectionDynamicFields ? (
+                    <Select
+                      size="large"
+                      placeholder={`----- Pilih ${data.fieldDisplayName} -----`}
+                      onChange={(e) => {
+                        let obj = data.selections?.find((datas) => datas.selection === e).dynamicFields;
 
-                      setDynamicFields(obj);
-                    }}
-                    options={data.selections?.map((datas) => ({
-                      label: datas.displayName,
-                      value: datas.selection,
-                    }))}
-                  />
+                        console.log(obj);
+
+                        setDynamicFields(obj);
+                      }}
+                      options={data.selections?.map((datas) => ({
+                        label: datas.displayName,
+                        value: datas.selection,
+                      }))}
+                    />
+                  ) : (
+                    <Select
+                      size="large"
+                      placeholder={`----- Pilih ${data.fieldDisplayName} -----`}
+                      options={data.selections?.map((datas) => ({
+                        label: datas.displayName,
+                        value: datas.selection,
+                      }))}
+                    />
+                  )}
                 </Form.Item>
               ) : dynamicDefaultFields(data) ? null : (
                 <Form.Item
@@ -200,30 +181,27 @@ const Eform = ({ outletCode }) => {
                   label={data.fieldDisplayName}
                   rules={[
                     {
-                      required:
-                        !dynamicFields?.find(
-                          (field) => field.name === data.fieldName
-                        ) && data.isMandatory
-                          ? true
-                          : false,
+                      required: !dynamicFields?.find((field) => field.name === data.fieldName) && data.isMandatory ? true : false,
                       message: `masukan ${data.fieldDisplayName}`,
                     },
                     {
-                      type: data.fieldName === "email" ? "email" : false,
+                      type: data.fieldName === "email" ? "email" : data.fieldType === "datePicker" ? "object" : "string",
                       message: "masukan email yang valid",
                     },
                     {
-                      min: data.minLength > 0 ? data.minLength : false,
-                      message: `masukan minimal ${
-                        data.minLength
-                      } dan maksimal ${data.maxLength}  ${
-                        data.constraint.acceptNumber
-                          ? "digit angka"
-                          : "karakter"
-                      } `,
+                      min: data.minLength > 0 ? data.minLength : 0,
+                      message: `masukan minimal ${data.minLength} dan maksimal ${data.maxLength}  ${data.constraint.acceptNumber ? "digit angka" : "karakter"} `,
                     },
-                  ]}>
-                  {data.constraint.formatCurrency === true ? (
+                  ]}
+                >
+                  {data.fieldType === "datePicker" ? (
+                    <DatePicker
+                      disabledDate={(current) => {
+                        return current && current.valueOf() >= Date.now(); //<------
+                      }}
+                      onChange={(e, d) => console.log(data)}
+                    />
+                  ) : data.constraint.formatCurrency === true ? (
                     <Input
                       prefix="Rp"
                       placeholder={`${data.fieldDisplayName}`}
@@ -235,14 +213,11 @@ const Eform = ({ outletCode }) => {
                         let terbilangValue = terbilangFormat(value);
                         form.setFieldsValue({
                           [data.fieldName]: formattedValue,
-                          [data.constraint.allowedSymbols.split(
-                            " "
-                          )[0]]: `${terbilangValue} rupiah`,
+                          [data.constraint.allowedSymbols.split(" ")[0]]: `${terbilangValue} rupiah`,
                         });
                       }}
                     />
-                  ) : data.constraint.acceptNumber === true &&
-                    data.constraint.acceptAlphabet === false ? (
+                  ) : data.constraint.acceptNumber === true && data.constraint.acceptAlphabet === false ? (
                     <Input
                       placeholder={`${data.fieldDisplayName}`}
                       size="large"
@@ -255,30 +230,20 @@ const Eform = ({ outletCode }) => {
                       }}
                     />
                   ) : data.fieldType === "terbilang" ? (
-                    <Input
-                      placeholder={`${data.fieldDisplayName}`}
-                      size="large"
-                      readOnly
-                    />
-                  ) : data.constraint.acceptNumber === false &&
-                    data.constraint.acceptAlphabet === true ? (
+                    <Input placeholder={`${data.fieldDisplayName}`} size="large" readOnly />
+                  ) : data.constraint.acceptNumber === false && data.constraint.acceptAlphabet === true ? (
                     <Input
                       placeholder={`${data.fieldDisplayName}`}
                       size="large"
                       onChange={(e) => {
-                        const value = e.target.value
-                          .replace(/\d+|^\s+$/g, "")
-                          .replace(/\s+/g, " ");
+                        const value = e.target.value.replace(/\d+|^\s+$/g, "").replace(/\s+/g, " ");
                         form.setFieldsValue({
                           [data.fieldName]: value,
                         });
                       }}
                     />
                   ) : (
-                    <Input
-                      placeholder={`${data.fieldDisplayName}`}
-                      size="large"
-                    />
+                    <Input placeholder={`${data.fieldDisplayName}`} size="large" />
                   )}
                 </Form.Item>
               )
@@ -286,11 +251,7 @@ const Eform = ({ outletCode }) => {
           </Form>
         </div>
         <div className="bottom-0 w-full z-30 sticky bg-[#E8F3FC]  flex justify-center space-x-8 py-4 shadow-lg">
-          <Button
-            onClick={handleSubmit}
-            type="primary"
-            className="bg-blue-700 w-80 text-lg"
-            size="large">
+          <Button onClick={handleSubmit} type="primary" className="bg-blue-700 w-80 text-lg" size="large">
             Submit{" "}
           </Button>
         </div>{" "}

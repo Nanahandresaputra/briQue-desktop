@@ -7,7 +7,6 @@ import moment from "moment";
 import { openNotifications } from "../../helpers/notification";
 import { BRIQUE_ACTION } from "../../store/actions";
 import { encryptContent } from "../../helpers/encrypt";
-import { useEffect } from "react";
 
 const MultiForm = ({ outletCode }) => {
   const { listForm } = useSelector((state) => state.briQueReducer);
@@ -19,12 +18,6 @@ const MultiForm = ({ outletCode }) => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (listForm != []) {
-      localStorage.setItem("listForm", JSON.stringify(listForm));
-    }
-  }, []);
 
   let listFormData = listForm?.map((data) => data.form);
 

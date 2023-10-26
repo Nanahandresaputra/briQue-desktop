@@ -9,16 +9,11 @@ import BookingSuccess from "./pages/booking-success";
 import QueuePrint from "./components/queue-print";
 import Loading from "./components/loading/index";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
 
 function App() {
   const { isGetLoading } = useSelector((state) => state.briQueReducer);
 
-  let { branchCode, bgUrl } = localStorage;
-
-  useEffect(() => {
-    localStorage.setItem("bgUrl", "./assets/svg/background.svg");
-  }, []);
+  let { branchCode } = localStorage;
 
   return (
     <Loading isGetLoading={isGetLoading}>
@@ -26,7 +21,7 @@ function App() {
         <div
           className="h-[768px] w-[1024px]  overflow-auto"
           style={{
-            backgroundImage: `url(${bgUrl})`,
+            backgroundImage: `url(/assets/svg/background.svg)`,
             backgroundSize: "100%",
           }}>
           <Router>

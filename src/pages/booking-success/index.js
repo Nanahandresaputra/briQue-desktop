@@ -7,7 +7,7 @@ import { useReactToPrint } from "react-to-print";
 import QueuePrint from "../../components/queue-print";
 import moment from "moment/min/moment-with-locales";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { formSubmissionDummy } from "../../dummy-data/form-submission";
 import { BRIQUE_ACTION } from "../../store/actions";
 import { openNotifications } from "../../helpers/notification";
@@ -15,6 +15,10 @@ const BookingSuccess = () => {
   const { photoBase64, submissionData } = useSelector(
     (state) => state.briQueReducer
   );
+
+  let { state } = useLocation();
+
+  console.log(state);
 
   //dummy submission
 

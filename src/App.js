@@ -17,9 +17,9 @@ function App() {
 
   return (
     <Loading isGetLoading={isGetLoading}>
-      <section className="flex h-screen items-center justify-center">
+      <section className="flex h-screen items-center justify-center overflow-x-hidden ">
         <div
-          className="h-[768px] w-[1024px]  overflow-auto"
+          className="h-full min-w-[1024px] min-h-[768px] max-w-[1920px] w-full"
           style={{
             backgroundImage: `url(/assets/svg/background.svg)`,
             backgroundSize: "100%",

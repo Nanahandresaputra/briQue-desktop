@@ -11,9 +11,10 @@ import { openNotifications } from "../../helpers/notification";
 import moment from "moment/moment";
 import { encryptContent } from "../../helpers/encrypt";
 import { pembukaanRekening } from "../../dummy-data/dummy-form-pembukaan-rekening";
+import dayjs from "dayjs";
 
 const Eform = ({ outletCode }) => {
-  const { formStructure, listForm, getEmail, getServices } = useSelector(
+  const { formStructure, listForm, getEmail } = useSelector(
     (state) => state.briQueReducer
   );
   const [dynamicFields, setDynamicFields] = useState([]);
@@ -22,7 +23,7 @@ const Eform = ({ outletCode }) => {
   let dataParams = JSON.parse(id);
 
   const dispatch = useDispatch();
-  // let { state } = useLocation();
+  let { state } = useLocation();
 
   let getFormValueId = listForm?.find((dataId) => dataId.id === dataParams.id);
 
@@ -30,18 +31,35 @@ const Eform = ({ outletCode }) => {
 
   useEffect(() => {
     myRef.current.scrollIntoView();
-    dispatch(BRIQUE_ACTION.formStructureAction(dataParams.name)).catch(
-      ({ errorMssg }) => {
-        openNotifications("error", "Error", errorMssg);
-      }
-    );
+    // dispatch(BRIQUE_ACTION.formStructureAction(dataParams.name)).catch(
+    //   ({ errorMssg }) => {
+    //     openNotifications("error", "Error", errorMssg);
+    //   }
+    // );
 
     if (getFormValueId) {
-      form.setFieldsValue(getFormValueId?.form);
+      let formData = getFormValueId.form;
+      let objKey = Object.keys(getFormValueId?.form);
+      let datePickerKey = formStructure.fields
+        ?.filter((datas) => datas.fieldType === "datePicker")
+        ?.map((data) => data.fieldName);
+
+      let keyDatePicker = datePickerKey
+        .filter((element) => objKey.includes(element))
+        .toString();
+
+      keyDatePicker
+        ? form.setFieldsValue({
+            ...getFormValueId?.form,
+            [keyDatePicker]: dayjs(formData[keyDatePicker]),
+          })
+        : form.setFieldsValue(getFormValueId?.form);
+
+      // form.setFieldsValue(getFormValueId?.form);
     }
 
     //dummy
-    // dispatch(BRIQUE_ACTION.setFormStructure(pembukaanRekening));
+    dispatch(BRIQUE_ACTION.setFormStructure(pembukaanRekening));
   }, []);
 
   // lisForm
@@ -58,20 +76,20 @@ const Eform = ({ outletCode }) => {
     }
   };
 
-  const submissionFunctions = () => {
+  const submissionFunctions = (res) => {
     let body = {
       outletCode,
       bookingDate: moment().format("YYYY-MM-DD"),
       email: getEmail,
       source: 2,
       isSpecial: 0,
-      listForm,
+      listForm: [res],
     };
 
     dispatch(BRIQUE_ACTION.submissionAction(encryptContent(body)))
       .then(() => {
         openNotifications("success", "Success");
-        navigate("/booking-success");
+        navigate("/booking-success", { state: body });
       })
       .catch(({ errorMssg }) => {
         openNotifications("error", "Error", errorMssg);
@@ -87,7 +105,7 @@ const Eform = ({ outletCode }) => {
     form
       .validateFields()
       .then((res) => {
-        if (getServices?.length > 1) {
+        if (state.getServices?.length > 1) {
           let curencyKeys = formStructure.fields
             ?.filter((datas) => datas.constraint.formatCurrency === true)
             ?.map((data) => data.fieldName);
@@ -95,16 +113,44 @@ const Eform = ({ outletCode }) => {
           let keyTrueCurrencies = curencyKeys
             .filter((element) => objKey.includes(element))
             .toString();
-          let sendForm = {
-            ...res,
-            [keyTrueCurrencies]: `${res[keyTrueCurrencies]}`.replace(
-              /[^0-9]/g,
-              ""
-            ),
-            briqueFormName: formStructure.formName,
-          };
 
-          if (res[keyTrueCurrencies]) {
+          let datePickerKey = formStructure.fields
+            ?.filter((datas) => datas.fieldType === "datePicker")
+            ?.map((data) => data.fieldName);
+
+          let keyDatePicker = datePickerKey
+            .filter((element) => objKey.includes(element))
+            .toString();
+
+          let sendForm =
+            keyTrueCurrencies && !keyDatePicker
+              ? {
+                  ...res,
+                  [keyTrueCurrencies]: `${res[keyTrueCurrencies]}`.replace(
+                    /[^0-9]/g,
+                    ""
+                  ),
+                  briqueFormName: formStructure.formName,
+                }
+              : !keyTrueCurrencies && keyDatePicker
+              ? {
+                  ...res,
+                  [keyDatePicker]: `${res[keyDatePicker].format("YYYY-MM-DD")}`,
+                  briqueFormName: formStructure.formName,
+                }
+              : keyTrueCurrencies && keyDatePicker
+              ? {
+                  ...res,
+                  [keyTrueCurrencies]: `${res[keyTrueCurrencies]}`.replace(
+                    /[^0-9]/g,
+                    ""
+                  ),
+                  [keyDatePicker]: `${res[keyDatePicker].format("YYYY-MM-DD")}`,
+                  briqueFormName: formStructure.formName,
+                }
+              : null;
+
+          if (res[keyTrueCurrencies] || res[keyDatePicker]) {
             let index = listForm?.findIndex(
               (data) => data.id === dataParams.id
             );
@@ -141,19 +187,22 @@ const Eform = ({ outletCode }) => {
           }
           navigate(-1);
         } else {
-          submissionFunctions();
+          submissionFunctions({
+            ...res,
+            briqueFormName: formStructure.formName,
+          });
         }
       })
       .catch((err) => console.log(err));
   };
 
   return (
-    <section ref={myRef} className="h-full">
+    <section ref={myRef} className="h-full w-full">
       <TopBar>{formStructure.formDisplayName}</TopBar>
       <div
         className={`${
           formStructure.fields ? "flex" : "hidden"
-        } mt-5  flex-col items-center h-full`}>
+        } mt-7  flex-col items-center h-full  max-h-[85vh] overflow-auto`}>
         <p className="text-white text-lg text-start">
           Pastikan data di bawah sudah sesuai dengan data diri kamu
         </p>
@@ -164,7 +213,7 @@ const Eform = ({ outletCode }) => {
           <Form
             layout="vertical"
             form={form}
-            className="bg-white px-4 py-7 w-10/12 shadow-lg rounded-lg">
+            className="bg-white px-4 py-7 md:w-11/12 lg:w-10/12 shadow-lg rounded-lg grid grid-cols-2 gap-x-3">
             {formStructure.fields?.map((data, index) =>
               data.fieldType === "selection" ? (
                 <Form.Item
@@ -221,6 +270,7 @@ const Eform = ({ outletCode }) => {
                     },
                   ]}>
                   <DatePicker
+                    format="YYYY-MM-DD"
                     className="w-full"
                     size="large"
                     disabledDate={(current) => {
@@ -325,7 +375,7 @@ const Eform = ({ outletCode }) => {
             )}
           </Form>
         </div>
-        <div className="bottom-0 w-full z-30 sticky bg-[#E8F3FC]  flex justify-center space-x-8 py-4 shadow-lg">
+        <div className="bottom-0 w-full z-30 fixed bg-[#E8F3FC]  flex justify-center space-x-8 py-4 shadow-lg">
           <Button
             onClick={handleSubmit}
             type="primary"
@@ -478,3 +528,30 @@ onChange={(e) => {
 //             ])
 //           );
 //         }
+
+// if (keyTrueCurrencies && !keyDatePicker) {
+//   sendForm = {
+//     ...res,
+//     [keyTrueCurrencies]: `${res[keyTrueCurrencies]}`.replace(
+//       /[^0-9]/g,
+//       ""
+//     ),
+//     briqueFormName: formStructure.formName,
+//   };
+// } else if (!keyTrueCurrencies && keyDatePicker) {
+// sendForm = {
+//   ...res,
+//   [keyDatePicker]: `${res[keyDatePicker].format("YYYY-MM-DD")}`,
+//   briqueFormName: formStructure.formName,
+// };
+// } else if (keyTrueCurrencies && keyDatePicker) {
+// sendForm = {
+//   ...res,
+//   [keyTrueCurrencies]: `${res[keyTrueCurrencies]}`.replace(
+//     /[^0-9]/g,
+//     ""
+//   ),
+//   [keyDatePicker]: `${res[keyDatePicker].format("YYYY-MM-DD")}`,
+//   briqueFormName: formStructure.formName,
+// };
+// }

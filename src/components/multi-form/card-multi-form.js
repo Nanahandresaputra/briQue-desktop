@@ -9,8 +9,6 @@ const CardMultiForm = ({ children, data, listForm, stateData }) => {
     id: data.id,
   });
 
-  console.log(listForm);
-
   return (
     <section className="p-3  h-full bg-gray-50 rounded-lg shadow-2xl text-blue-900">
       <div className="flex justify-between items-center">

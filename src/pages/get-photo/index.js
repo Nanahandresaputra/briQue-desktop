@@ -10,8 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Form, Input, Modal } from "antd";
 import { BRIQUE_ACTION } from "../../store/actions";
 
-const width = 400;
-const height = 450;
+const width = "20rem";
+const height = "50vh";
 
 const GetPhoto = () => {
   const { photoBase64, getEmail } = useSelector((state) => state.briQueReducer);
@@ -101,7 +101,7 @@ const GetPhoto = () => {
       </Modal>
 
       <TopBar>Data Nasabah</TopBar>
-      <div className="py-7 bg-black bg-opacity-75 flex flex-col items-center justify-center">
+      <div className="py-7 bg-black bg-opacity-75 flex flex-col items-center h-full">
         <div style={{ width, height, position: "relative" }} className=" z-10">
           {boundingBox.map((box, index) => (
             <div
@@ -123,7 +123,7 @@ const GetPhoto = () => {
             forceScreenshotSourceSize
             className={`${
               photoBase64 ? "hidden" : "block"
-            } h-[${height}] w-[${width}] absolute`}
+            } h-[${height}] w-[${width}] absolute mt-3vh`}
           />
           <img
             src={photoBase64}

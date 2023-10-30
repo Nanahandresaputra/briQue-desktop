@@ -7,19 +7,23 @@ import moment from "moment";
 import { openNotifications } from "../../helpers/notification";
 import { BRIQUE_ACTION } from "../../store/actions";
 import { encryptContent } from "../../helpers/encrypt";
+import secureLocalStorage from "react-secure-storage";
+import { useEffect } from "react";
 
 const MultiForm = ({ outletCode }) => {
   const { listForm } = useSelector((state) => state.briQueReducer);
 
   let { state } = useLocation();
 
-  console.log(state);
-
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
-  let listFormData = listForm?.map((data) => data.form);
+  useEffect(() => {
+    if (listForm.length) {
+      localStorage.setItem("listForm", JSON.stringify(listForm));
+    }
+  }, []);
 
   const submissionFunctions = () => {
     let body = {
@@ -28,13 +32,13 @@ const MultiForm = ({ outletCode }) => {
       email: state.getEmail,
       source: 2,
       isSpecial: 0,
-      listForm: listFormData,
+      listForm: listForm?.map((data) => data.form),
     };
 
     dispatch(BRIQUE_ACTION.submissionAction(encryptContent(body)))
       .then(() => {
         openNotifications("success", "Success");
-        navigate("/booking-success");
+        navigate("/booking-success", { state: body });
       })
       .catch(({ errorMssg }) => {
         openNotifications("error", "Error", errorMssg);
@@ -50,7 +54,7 @@ const MultiForm = ({ outletCode }) => {
     email: state?.getEmail,
     source: 2,
     isSpecial: 0,
-    listForm: listFormData,
+    listForm: listForm?.map((data) => data.form),
   });
 
   return (

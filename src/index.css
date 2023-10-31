@@ -4,6 +4,6 @@
 @tailwind utilities;
 
 body {
-    @apply font-open-sans
+    @apply font-open-sans bg-[#E8F3FC] h-full
 }
 

@@ -31,11 +31,11 @@ const Eform = ({ outletCode }) => {
 
   useEffect(() => {
     myRef.current.scrollIntoView();
-    // dispatch(BRIQUE_ACTION.formStructureAction(dataParams.name)).catch(
-    //   ({ errorMssg }) => {
-    //     openNotifications("error", "Error", errorMssg);
-    //   }
-    // );
+    dispatch(BRIQUE_ACTION.formStructureAction(dataParams.name)).catch(
+      ({ errorMssg }) => {
+        openNotifications("error", "Error", errorMssg);
+      }
+    );
 
     if (getFormValueId) {
       let formData = getFormValueId.form;
@@ -59,7 +59,7 @@ const Eform = ({ outletCode }) => {
     }
 
     //dummy
-    dispatch(BRIQUE_ACTION.setFormStructure(pembukaanRekening));
+    // dispatch(BRIQUE_ACTION.setFormStructure(pembukaanRekening));
   }, []);
 
   // lisForm
@@ -196,20 +196,33 @@ const Eform = ({ outletCode }) => {
       .catch((err) => console.log(err));
   };
 
+  const [tabletKeypad, setTabletKeypad] = useState(745);
+
+  useEffect(() => {
+    window.addEventListener("resize", () => {
+      // For the rare legacy browsers that don't support it
+      if (!window.visualViewport) {
+        return;
+      }
+
+      setTabletKeypad(window.visualViewport.height);
+    });
+  }, []);
+
   return (
-    <section ref={myRef} className="h-full w-full">
+    <section ref={myRef} className="h-screen w-full ">
       <TopBar>{formStructure.formDisplayName}</TopBar>
       <div
         className={`${
           formStructure.fields ? "flex" : "hidden"
-        } mt-7  flex-col items-center h-full  max-h-[85vh] overflow-auto`}>
+        }     flex-col items-center h-full   overflow-auto`}>
         <p className="text-white text-lg text-start">
           Pastikan data di bawah sudah sesuai dengan data diri kamu
         </p>
         <div
           className={`w-full ${
-            formStructure.fields?.length < 6 ? "h-full" : "h-auto"
-          } flex justify-center`}>
+            formStructure.fields?.length > 6 ? "pb-10" : "pb-0"
+          } h-auto flex justify-center`}>
           <Form
             layout="vertical"
             form={form}
@@ -375,16 +388,19 @@ const Eform = ({ outletCode }) => {
             )}
           </Form>
         </div>
-        <div className="bottom-0 w-full z-30 fixed bg-[#E8F3FC]  flex justify-center space-x-8 py-4 shadow-lg">
-          <Button
-            onClick={handleSubmit}
-            type="primary"
-            className="bg-blue-700 w-80 text-lg"
-            size="large">
-            Submit{" "}
-          </Button>
-        </div>{" "}
       </div>
+      <div
+        className={`bottom-0 w-full z-30  bg-[#E8F3FC]  flex justify-center space-x-8 py-4 shadow-lg ${
+          tabletKeypad < 658 ? "relative" : "fixed"
+        }`}>
+        <Button
+          onClick={handleSubmit}
+          type="primary"
+          className=" bg-blue-700 w-80 text-lg"
+          size="large">
+          Submit{" "}
+        </Button>
+      </div>{" "}
     </section>
   );
 };

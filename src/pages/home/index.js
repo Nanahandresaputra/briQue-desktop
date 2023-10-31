@@ -13,10 +13,10 @@ const Home = () => {
   let useQuery = () => new URLSearchParams(useLocation().search);
   const query = useQuery();
   useEffect(() => {
-    // dispatch(BRIQUE_ACTION.formCategoryAction()).catch((err) => {
-    //   console.log(err);
-    //   openNotifications("error", "Error", err.errorMssg);
-    // });
+    dispatch(BRIQUE_ACTION.formCategoryAction()).catch((err) => {
+      console.log(err);
+      openNotifications("error", "Error", err.errorMssg);
+    });
 
     if (!localStorage.getItem("branchCode")) {
       localStorage.setItem("branchCode", query.get("branchCode"));
@@ -28,11 +28,11 @@ const Home = () => {
     dispatch(BRIQUE_ACTION.setPhotoBase64(null));
 
     //dummy
-    dispatch(BRIQUE_ACTION.setFormCategoryApi(formCategoryDummy));
+    // dispatch(BRIQUE_ACTION.setFormCategoryApi(formCategoryDummy));
   }, []);
 
   return (
-    <section className="flex flex-col justify-center items-center w-full">
+    <section className="flex flex-col justify-center items-center w-full h-screen">
       <h1 className="font-bold text-6xl/4 xl:text-6xl">
         <span className="text-white">BRI</span>
         <span className="text-orange-500">QUE</span>

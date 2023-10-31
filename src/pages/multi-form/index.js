@@ -38,7 +38,7 @@ const MultiForm = ({ outletCode }) => {
     dispatch(BRIQUE_ACTION.submissionAction(encryptContent(body)))
       .then(() => {
         openNotifications("success", "Success");
-        navigate("/booking-success", { state: body });
+        navigate("/booking-success");
       })
       .catch(({ errorMssg }) => {
         openNotifications("error", "Error", errorMssg);
@@ -48,17 +48,17 @@ const MultiForm = ({ outletCode }) => {
     // navigate("/booking-success");
   };
 
-  console.log({
-    outletCode,
-    bookingDate: moment().format("YYYY-MM-DD"),
-    email: state?.getEmail,
-    source: 2,
-    isSpecial: 0,
-    listForm: listForm?.map((data) => data.form),
-  });
+  // console.log({
+  //   outletCode,
+  //   bookingDate: moment().format("YYYY-MM-DD"),
+  //   email: state?.getEmail,
+  //   source: 2,
+  //   isSpecial: 0,
+  //   listForm: listForm?.map((data) => data.form),
+  // });
 
   return (
-    <section className="h-full max-h-[550px]">
+    <section className="h-screen">
       <TopBar>Multi Form</TopBar>
       <div
         className={`my-7 flex justify-center ${
@@ -68,7 +68,7 @@ const MultiForm = ({ outletCode }) => {
           <h1 className="text-white text-lg font-semibold">
             Pilih Reservasi Transaksi
           </h1>
-          <div className="space-y-5">
+          <div className="space-y-5 max-h-screen overflow-auto">
             {state.getServices?.map((data, index) => (
               <CardMultiForm
                 data={data}

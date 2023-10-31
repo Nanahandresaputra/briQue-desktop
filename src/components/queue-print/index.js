@@ -6,6 +6,8 @@ import { formSubmissionDummy } from "../../dummy-data/form-submission";
 const QueuePrint = forwardRef((props, ref) => {
   let submissionData = props.submissionData;
 
+  console.log(submissionData);
+
   //dummy submissionData
   // let submissionData = formSubmissionDummy;
 

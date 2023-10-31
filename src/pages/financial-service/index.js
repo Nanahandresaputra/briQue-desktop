@@ -22,9 +22,9 @@ const FinancialService = () => {
   );
 
   return (
-    <section className="max-h-screen overflow-auto">
+    <section className="max-h-screen">
       <TopBar>Layanan {getFormByCategory?.displayName}</TopBar>
-      <div className="my-7 flex justify-center items-center h-full overflow-auto">
+      <div className="mt-7 flex justify-center max-h-[85vh] overflow-auto">
         <div className="space-y-3 w-8/12">
           <h1 className="text-white text-lg font-semibold">
             Pilih Reservasi Transaksi

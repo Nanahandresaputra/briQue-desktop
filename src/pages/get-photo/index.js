@@ -10,8 +10,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Form, Input, Modal } from "antd";
 import { BRIQUE_ACTION } from "../../store/actions";
 
-const width = "20rem";
-const height = "50vh";
+const width = 320;
+const height = 370;
+
+const widthLg = 400;
+const heightLg = 450;
 
 const GetPhoto = () => {
   const { photoBase64, getEmail } = useSelector((state) => state.briQueReducer);
@@ -75,7 +78,7 @@ const GetPhoto = () => {
   };
 
   return (
-    <section className="h-full">
+    <section className="h-screen">
       <Modal
         title="Masukan email"
         open={isModalOpen}
@@ -101,8 +104,10 @@ const GetPhoto = () => {
       </Modal>
 
       <TopBar>Data Nasabah</TopBar>
-      <div className="py-7 bg-black bg-opacity-75 flex flex-col items-center h-full">
-        <div style={{ width, height, position: "relative" }} className=" z-10">
+      <div className="py-7 bg-black bg-opacity-75 flex flex-col items-center h-[80vh]">
+        <div
+          style={{ width, height, position: "relative" }}
+          className={` z-10`}>
           {boundingBox.map((box, index) => (
             <div
               className={`${photoBase64 ? "hidden" : "block"} `}
@@ -123,7 +128,7 @@ const GetPhoto = () => {
             forceScreenshotSourceSize
             className={`${
               photoBase64 ? "hidden" : "block"
-            } h-[${height}] w-[${width}] absolute mt-3vh`}
+            } h-[${height}] w-[${width}] absolute `}
           />
           <img
             src={photoBase64}
@@ -133,7 +138,7 @@ const GetPhoto = () => {
             } h-[${height}] w-[${width}] absolute `}
           />
         </div>
-        <p className="text-white text-center text-lg font-semibold">
+        <p className="text-white text-center text-lg font-semibold ">
           [Foto Nasabah]
         </p>
         <FooterSubmit

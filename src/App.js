@@ -9,6 +9,7 @@ import BookingSuccess from "./pages/booking-success";
 import QueuePrint from "./components/queue-print";
 import Loading from "./components/loading/index";
 import { useSelector } from "react-redux";
+import SmallResolution from "./components/small-resolution";
 
 function App() {
   const { isGetLoading } = useSelector((state) => state.briQueReducer);
@@ -17,9 +18,12 @@ function App() {
 
   return (
     <Loading isGetLoading={isGetLoading}>
-      <section className="flex h-screen items-center justify-center overflow-x-hidden ">
+      <section className="flex items-center h-full justify-center overflow-x-hidden">
+        <div className="md:hidden">
+          <SmallResolution />
+        </div>
         <div
-          className="h-full min-w-[1024px] min-h-[768px] max-w-[1920px] w-full"
+          className="h-full min-w-[1024px]  max-w-[1920px] w-full hidden md:block"
           style={{
             backgroundImage: `url(/assets/svg/background.svg)`,
             backgroundSize: "100%",

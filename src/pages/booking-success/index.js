@@ -7,20 +7,18 @@ import { useReactToPrint } from "react-to-print";
 import QueuePrint from "../../components/queue-print";
 import moment from "moment/min/moment-with-locales";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { formSubmissionDummy } from "../../dummy-data/form-submission";
 import { BRIQUE_ACTION } from "../../store/actions";
 import { openNotifications } from "../../helpers/notification";
 const BookingSuccess = () => {
   const { photoBase64, submissionData } = useSelector(
-    (state) => state.briQueReducer
+    (submissionData) => submissionData.briQueReducer
   );
 
-  let { state } = useLocation();
-
-  console.log(state);
-
   //dummy submission
+
+  console.log(submissionData);
 
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
@@ -50,14 +48,14 @@ const BookingSuccess = () => {
   // });
 
   return (
-    <section className="flex flex-col h-full space-y-5 items-center ">
-      <h3 className="font-bold text-6xl/3 ">
+    <section className="flex flex-col h-screen max-h-screen space-y-5 items-center">
+      <h3 className="font-bold text-5xl/3 xl:text-6xl/3 ">
         <span className="text-white">BRI</span>
         <span className="text-orange-500">QUE</span>
       </h3>
-      <div className="w-9/12 flex flex-col items-center relative rounded shadow-lg">
-        <BsFillCheckCircleFill className="text-5xl text-center text-green-500 bg-white rounded-full p-2 absolute -mt-8" />
-        <div className="bg-white w-full flex flex-col items-center py-9">
+      <div className="w-9/12 flex flex-col items-center relative rounded shadow-lg  ">
+        <BsFillCheckCircleFill className="text-5xl text-center text-green-500 bg-white rounded-full p-2 absolute -mt-8 " />
+        <div className="bg-white w-full flex flex-col items-center py-5 xl:py-9  xl:h-auto  ">
           <h1 className="text-blue-900 text-xl/[1px] ">Reservasi Berhasil</h1>
           <p className="text-4xl/[2px]  font-bold text-blue-900">
             {submissionData.queueNo}
@@ -72,9 +70,8 @@ const BookingSuccess = () => {
             <p className="text-sm/[1px] font-semibold text-blue-900">
               Nomor Referensi
             </p>
-
             <p className="text-sm/[1px] font-semibold text-blue-900">
-              {submissionData.referenceCodeList.length > 0
+              {submissionData.referenceCodeList?.length > 0
                 ? submissionData.referenceCodeList.toString()
                 : "-"}
             </p>
@@ -85,6 +82,7 @@ const BookingSuccess = () => {
           </div>
         </div>
       </div>
+
       <div className="flex justify-center space-x-8">
         <Button
           type="primary"

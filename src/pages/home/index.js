@@ -32,8 +32,8 @@ const Home = () => {
   }, []);
 
   return (
-    <section className="flex flex-col justify-center items-center w-full h-screen">
-      <h1 className="font-bold text-6xl/4 xl:text-6xl">
+    <section className="flex flex-col items-center w-full h-screen">
+      <h1 className="font-bold text-6xl/4">
         <span className="text-white">BRI</span>
         <span className="text-orange-500">QUE</span>
       </h1>

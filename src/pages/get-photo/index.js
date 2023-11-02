@@ -1,8 +1,5 @@
 import Webcam from "react-webcam";
-import { useFaceDetection } from "react-use-face-detection";
-import FaceDetection from "@mediapipe/face_detection";
-import { Camera } from "@mediapipe/camera_utils";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import TopBar from "../../components/topbar";
 import FooterSubmit from "../../components/get-photo/footer-submit";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -10,32 +7,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Form, Input, Modal } from "antd";
 import { BRIQUE_ACTION } from "../../store/actions";
 
-const width = 320;
-const height = 370;
-
-const widthLg = 400;
-const heightLg = 450;
-
 const GetPhoto = () => {
   const { photoBase64, getEmail } = useSelector((state) => state.briQueReducer);
 
   let { state } = useLocation();
 
-  const { webcamRef, boundingBox } = useFaceDetection({
-    faceDetectionOptions: {
-      model: "short",
-    },
-    faceDetection: new FaceDetection.FaceDetection({
-      locateFile: (file) =>
-        `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
-    }),
-    camera: ({ mediaSrc, onFrame }) =>
-      new Camera(mediaSrc, {
-        onFrame,
-        width,
-        height,
-      }),
-  });
+  const webcamRef = useRef(null);
 
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -104,43 +81,28 @@ const GetPhoto = () => {
       </Modal>
 
       <TopBar>Data Nasabah</TopBar>
-      <div className="py-7 bg-black bg-opacity-75 flex flex-col items-center h-[80vh]">
+      <div className="py-7 bg-black bg-opacity-75 flex flex-col items-center lg:mt-12 h-screen">
         <div
-          style={{ width, height, position: "relative" }}
-          className={` z-10`}>
-          {boundingBox.map((box, index) => (
-            <div
-              className={`${photoBase64 ? "hidden" : "block"} `}
-              key={`${index + 1}`}
-              style={{
-                border: "4px solid blue",
-                position: "absolute",
-                top: `${box.yCenter * 100}%`,
-                left: `${box.xCenter * 100}%`,
-                width: `${box.width * 100}%`,
-                height: `${box.height * 100}%`,
-                zIndex: 1,
-              }}
-            />
-          ))}
+          // style={{ position: "relative" }}
+          className={`flex flex-col items-center z-10`}>
           <Webcam
             ref={webcamRef}
             forceScreenshotSourceSize
             className={`${
               photoBase64 ? "hidden" : "block"
-            } h-[${height}] w-[${width}] absolute `}
+            } h-[380px]  w-[350px] 2xl:h-[520px] 2xl:w-[450px] mt-16 object-cover  `}
           />
           <img
             src={photoBase64}
             alt="foto nasabah"
             className={`${
               photoBase64 ? "block" : "hidden"
-            } h-[${height}] w-[${width}] absolute `}
+            } h-[380px]  w-[350px] 2xl:h-[520px] 2xl:w-[450px] mt-16  object-cover   `}
           />
+          <p className="text-white text-center text-lg font-semibold">
+            [Foto Nasabah]
+          </p>
         </div>
-        <p className="text-white text-center text-lg font-semibold ">
-          [Foto Nasabah]
-        </p>
         <FooterSubmit
           navigateToForm={navigateToForm}
           showModal={showModal}
@@ -153,3 +115,37 @@ const GetPhoto = () => {
 };
 
 export default GetPhoto;
+
+// const { webcamRef, boundingBox } = useFaceDetection({
+//   faceDetectionOptions: {
+//     model: "short",
+//   },
+//   faceDetection: new FaceDetection.FaceDetection({
+//     locateFile: (file) =>
+//       `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
+//   }),
+//   camera: ({ mediaSrc, onFrame }) =>
+//     new Camera(mediaSrc, {
+//       onFrame,
+//       width,
+//       height,
+//     }),
+// });
+
+//  {
+//    boundingBox.map((box, index) => (
+//      <div
+//        className={`${photoBase64 ? "hidden" : "block"} `}
+//        key={`${index + 1}`}
+//        style={{
+//          border: "4px solid blue",
+//          position: "absolute",
+//          top: `${box.yCenter * 100}%`,
+//          left: `${box.xCenter * 100}%`,
+//          width: `${box.width * 100}%`,
+//          height: `${box.height * 100}%`,
+//          zIndex: 1,
+//        }}
+//      />
+//    ));
+//  }

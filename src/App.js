@@ -18,12 +18,12 @@ function App() {
 
   return (
     <Loading isGetLoading={isGetLoading}>
-      <section className="flex items-center h-full justify-center overflow-x-hidden">
+      <section className="flex items-center h-full justify-center overflow-hidden">
         <div className="md:hidden">
           <SmallResolution />
         </div>
         <div
-          className="h-full min-w-[1024px]  max-w-[1920px] w-full hidden md:block"
+          className="h-full min-w-[1024px]  max-w-[1920px] w-full hidden md:block "
           style={{
             backgroundImage: `url(/assets/svg/background.svg)`,
             backgroundSize: "100%",

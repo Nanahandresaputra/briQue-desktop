@@ -209,13 +209,15 @@ const Eform = ({ outletCode }) => {
     });
   }, []);
 
+  // console.log(tabletKeypad);
+
   return (
-    <section ref={myRef} className="h-screen w-full ">
+    <section ref={myRef} className="h-full w-full overflow-auto ">
       <TopBar>{formStructure.formDisplayName}</TopBar>
       <div
         className={`${
           formStructure.fields ? "flex" : "hidden"
-        }     flex-col items-center h-full   overflow-auto`}>
+        }     flex-col items-center h-full  mt-24`}>
         <p className="text-white text-lg text-start">
           Pastikan data di bawah sudah sesuai dengan data diri kamu
         </p>
@@ -317,13 +319,37 @@ const Eform = ({ outletCode }) => {
                     },
                     {
                       min: data.minLength > 0 ? data.minLength : 0,
-                      message: `masukan minimal ${
-                        data.minLength
-                      } dan maksimal ${data.maxLength}  ${
+                      max: data.maxLength > 0 ? data.maxLength : 0,
+
+                      message: `${
+                        data.minLength > 0
+                          ? `masukan minimal ${data.minLength} dan`
+                          : "masukan"
+                      } maksimal ${data.maxLength}  ${
                         data.constraint.acceptNumber
                           ? "digit angka"
                           : "karakter"
                       } `,
+                    },
+                    {
+                      pattern:
+                        data.constraint.acceptNumber === true &&
+                        data.constraint.acceptAlphabet === false
+                          ? new RegExp(/^[0-9]+$/)
+                          : data.constraint.acceptNumber === false &&
+                            data.constraint.acceptAlphabet === true
+                          ? new RegExp(
+                              /^[a-zA-Z@~`!@#$%^&*()_=+\\\\';:\"\\/?>.<,-]+$/i
+                            )
+                          : new RegExp(/.*/),
+                      message:
+                        data.constraint.acceptNumber === true &&
+                        data.constraint.acceptAlphabet === false
+                          ? "hanya masukan angka"
+                          : data.constraint.acceptNumber === false &&
+                            data.constraint.acceptAlphabet === true
+                          ? "hanya masukan huruf"
+                          : "",
                     },
                   ]}>
                   {data.constraint.formatCurrency === true ? (
@@ -349,11 +375,16 @@ const Eform = ({ outletCode }) => {
                     <Input
                       placeholder={`${data.fieldDisplayName}`}
                       size="large"
-                      maxLength={data.maxLength}
+                      maxLength={data.maxLength + 1}
                       onChange={(e) => {
                         const value = e.target.value.replace(/[^0-9]/g, "");
                         form.setFieldsValue({
-                          [data.fieldName]: value,
+                          [data.fieldName]:
+                            /^([a-zA-Z]+\s)*[a-zA-Z]+$/.test(
+                              parseInt(e.target.value)
+                            ) && `${e.target.value}`.length > 1
+                              ? value
+                              : e.target.value,
                         });
                       }}
                     />
@@ -373,7 +404,11 @@ const Eform = ({ outletCode }) => {
                           .replace(/\d+|^\s+$/g, "")
                           .replace(/\s+/g, " ");
                         form.setFieldsValue({
-                          [data.fieldName]: value,
+                          [data.fieldName]:
+                            /^\d+$/.test(parseInt(e.target.value)) &&
+                            `${e.target.value}`.length > 1
+                              ? value
+                              : e.target.value,
                         });
                       }}
                     />
@@ -388,19 +423,19 @@ const Eform = ({ outletCode }) => {
             )}
           </Form>
         </div>
+        <div
+          className={`bottom-0 w-full z-30  bg-[#E8F3FC]  flex justify-center space-x-8 py-4 shadow-lg ${
+            tabletKeypad < 658 ? "relative" : "fixed"
+          }`}>
+          <Button
+            onClick={handleSubmit}
+            type="primary"
+            className=" bg-blue-700 w-80 text-lg"
+            size="large">
+            Submit{" "}
+          </Button>
+        </div>{" "}
       </div>
-      <div
-        className={`bottom-0 w-full z-30  bg-[#E8F3FC]  flex justify-center space-x-8 py-4 shadow-lg ${
-          tabletKeypad < 658 ? "relative" : "fixed"
-        }`}>
-        <Button
-          onClick={handleSubmit}
-          type="primary"
-          className=" bg-blue-700 w-80 text-lg"
-          size="large">
-          Submit{" "}
-        </Button>
-      </div>{" "}
     </section>
   );
 };

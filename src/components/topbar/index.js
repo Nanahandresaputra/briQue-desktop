@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const TopBar = ({ children }) => {
   const navigate = useNavigate();
   return (
-    <nav className="sticky top-0 bg-[#1583DD] z-30 flex justify-center py-3 shadow-lg">
+    <nav className="fixed w-full top-0 bg-[#1583DD] z-30 flex justify-center py-3 shadow-lg">
       <div className="flex items-center justify-between w-10/12">
         <FaArrowLeft
           className="text-white text-3xl cursor-pointer"

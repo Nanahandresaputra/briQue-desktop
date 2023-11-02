@@ -18,7 +18,7 @@ function App() {
 
   return (
     <Loading isGetLoading={isGetLoading}>
-      <section className="flex items-center h-full justify-center overflow-hidden">
+      <section className="flex items-center h-full justify-center w-full ">
         <div className="md:hidden">
           <SmallResolution />
         </div>
@@ -26,7 +26,7 @@ function App() {
           className="h-full min-w-[1024px]  max-w-[1920px] w-full hidden md:block "
           style={{
             backgroundImage: `url(/assets/svg/background.svg)`,
-            backgroundSize: "100%",
+            backgroundSize: "cover",
           }}>
           <Router>
             <Routes>

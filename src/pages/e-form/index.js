@@ -212,12 +212,16 @@ const Eform = ({ outletCode }) => {
   // console.log(tabletKeypad);
 
   return (
-    <section ref={myRef} className="h-full w-full overflow-auto ">
+    <section
+      ref={myRef}
+      className={`${
+        formStructure.fields?.length > 6 ? "h-full" : "h-screen"
+      } w-full overflow-auto`}>
       <TopBar>{formStructure.formDisplayName}</TopBar>
       <div
         className={`${
           formStructure.fields ? "flex" : "hidden"
-        }     flex-col items-center h-full  mt-24`}>
+        }     flex-col items-center h-full mt-24`}>
         <p className="text-white text-lg text-start">
           Pastikan data di bawah sudah sesuai dengan data diri kamu
         </p>
@@ -319,17 +323,21 @@ const Eform = ({ outletCode }) => {
                     },
                     {
                       min: data.minLength > 0 ? data.minLength : 0,
-                      max: data.maxLength > 0 ? data.maxLength : 0,
+                      max: data.maxLength > 0 ? data.maxLength : 9999999999,
 
                       message: `${
                         data.minLength > 0
                           ? `masukan minimal ${data.minLength} dan`
-                          : "masukan"
-                      } maksimal ${data.maxLength}  ${
-                        data.constraint.acceptNumber
-                          ? "digit angka"
-                          : "karakter"
-                      } `,
+                          : ""
+                      } ${
+                        data.maxLength > 0
+                          ? `masukan maksimal ${data.maxLength}  ${
+                              data.constraint.acceptNumber
+                                ? "digit angka"
+                                : "karakter"
+                            } `
+                          : ""
+                      }`,
                     },
                     {
                       pattern:

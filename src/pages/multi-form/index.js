@@ -58,17 +58,17 @@ const MultiForm = ({ outletCode }) => {
   // });
 
   return (
-    <section className="h-screen">
+    <section className="h-full">
       <TopBar>Multi Form</TopBar>
       <div
-        className={`my-7 flex justify-center ${
+        className={`mt-24 mb-40 flex justify-center ${
           state.getServices?.length < 5 ? "h-full" : "h-auto"
         }`}>
-        <div className="space-y-3 w-8/12">
+        <div className="space-y-3 w-8/12 max-h-screen ">
           <h1 className="text-white text-lg font-semibold">
             Pilih Reservasi Transaksi
           </h1>
-          <div className="space-y-5 max-h-screen overflow-auto">
+          <div className="space-y-5 ">
             {state.getServices?.map((data, index) => (
               <CardMultiForm
                 data={data}

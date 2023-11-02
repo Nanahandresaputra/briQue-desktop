@@ -216,7 +216,8 @@ const Eform = ({ outletCode }) => {
       ref={myRef}
       className={`${
         formStructure.fields?.length > 6 ? "h-full" : "h-screen"
-      } w-full overflow-auto`}>
+      } w-full overflow-auto no-scrollbar
+      `}>
       <TopBar>{formStructure.formDisplayName}</TopBar>
       <div
         className={`${

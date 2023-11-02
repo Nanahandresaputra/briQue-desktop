@@ -22,7 +22,7 @@ const FinancialService = () => {
   );
 
   return (
-    <section className="max-h-screen overflow-auto">
+    <section className="max-h-screen overflow-auto no-scrollbar w-full">
       <TopBar>Layanan {getFormByCategory?.displayName}</TopBar>
       <div className="mt-7 flex justify-center py-24 ">
         <div className="space-y-3 w-8/12 h-full ">

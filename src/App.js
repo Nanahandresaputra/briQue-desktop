@@ -18,16 +18,16 @@ function App() {
 
   return (
     <Loading isGetLoading={isGetLoading}>
-      <section className="flex items-center h-full justify-center w-full ">
+      <section
+        className="flex items-center h-full justify-center w-full"
+        style={{
+          backgroundImage: `url(/assets/svg/background.svg)`,
+          backgroundSize: "100%",
+        }}>
         <div className="md:hidden">
           <SmallResolution />
         </div>
-        <div
-          className="h-full min-w-[1024px]  max-w-[1920px] w-full hidden md:block "
-          style={{
-            backgroundImage: `url(/assets/svg/background.svg)`,
-            backgroundSize: "cover",
-          }}>
+        <div className="h-full w-full hidden md:block ">
           <Router>
             <Routes>
               <Route path="/brique" element={<Home />} />

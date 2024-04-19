@@ -19,11 +19,13 @@ const MultiForm = ({ outletCode }) => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (listForm.length) {
-      localStorage.setItem("listForm", JSON.stringify(listForm));
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (listForm.length) {
+  //     localStorage.setItem("listForm", JSON.stringify(listForm));
+  //   }
+  // }, []);
+
+  console.log(listForm);
 
   const submissionFunctions = () => {
     let body = {

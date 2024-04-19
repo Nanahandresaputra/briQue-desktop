@@ -4,7 +4,7 @@ import axios from "axios";
 import { BRIQUE_ACTION_TYPE } from "../action-types";
 
 const apiConfig = {
-  baseUrl: "http://10.10.10.160:9443/brique-api/api/client",
+  baseUrl: "https://demo-cerbisque.cpm.systems:4443/brique-api/api/client",
   formCategory: "formCategory",
   formStructure: "formStructure?formName=",
   formSubmission: "formSubmission",
@@ -139,6 +139,7 @@ const submissionAction = (data) => {
     return new Promise((resolve, reject) => {
       axios({
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         url: `${apiConfig.baseUrl}/${apiConfig.formSubmission}`,
         data,
       })

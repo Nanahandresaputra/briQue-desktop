@@ -45,7 +45,7 @@ const Eform = ({ outletCode }) => {
         ?.map((data) => data.fieldName);
 
       let keyDatePicker = datePickerKey
-        .filter((element) => objKey.includes(element))
+        ?.filter((element) => objKey.includes(element))
         .toString();
 
       keyDatePicker
@@ -85,6 +85,8 @@ const Eform = ({ outletCode }) => {
       isSpecial: 0,
       listForm: [res],
     };
+
+    console.log(body);
 
     dispatch(BRIQUE_ACTION.submissionAction(encryptContent(body)))
       .then(() => {
@@ -185,6 +187,7 @@ const Eform = ({ outletCode }) => {
                   ])
                 );
           }
+          localStorage.setItem("listForm", JSON.stringify(listForm));
           navigate(-1);
         } else {
           submissionFunctions({

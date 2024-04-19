@@ -1,7 +1,6 @@
 import { QRCode } from "antd";
 import moment from "moment/min/moment-with-locales";
 import { forwardRef } from "react";
-import { formSubmissionDummy } from "../../dummy-data/form-submission";
 
 const QueuePrint = forwardRef((props, ref) => {
   let submissionData = props.submissionData;

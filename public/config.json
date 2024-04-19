@@ -1,3 +1,3 @@
 {
-  "baseUrl": "http://10.10.10.160:9443/brique-api/api/client"
+  "baseUrl": "https://demo-cerbisque.cpm.systems:4443"
 }
